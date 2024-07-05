@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, flash, redirect, render_template, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -6,6 +6,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trading.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+app.secret_key = 'nil123'
 
 class TradingSignal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,7 +25,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -52,15 +53,19 @@ def add_trading_signal():
 
 @app.route('/api/user', methods=['POST'])
 def add_user():
-    data = request.json
-    new_user = User(
-        username=data['username'],
-        email=data['email']
-    )
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'User added', 'id': new_user.id}), 201
-
+    email = request.form.get('username')
+    if email:
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('You are already subscribed!', 'info')
+        else:
+            new_user = User(username="Prelaunch", email=email)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Thank you for subscribing!', 'success')
+    else:
+        flash('Please enter a valid email address.', 'error')
+    return redirect(url_for('home'))
 
 @app.route('/api/trading_signals', methods=['GET'])
 def get_trading_signals():
@@ -87,6 +92,11 @@ def get_users():
         'created_at': user.created_at.isoformat()
     } for user in users]
     return jsonify(results), 200
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 if __name__ == '__main__':
     

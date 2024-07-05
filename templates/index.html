@@ -232,30 +232,30 @@
   </h2>
 
   <div class="login__container">
-    <img src="static/img/login.png" alt="Login Image" class="login__img">
+    <!-- <img src="static/img/login.png" alt="Login Image" class="login__img"> -->
     
     <div class="login__content">
-      <form action="/login" method="post" class="login__form" id="login-form">
-        <h3 class="login__title">Login to Your Account</h3>
+      <form action="/api/user" method="post" class="login__form" id="login-form">
+        <h3 class="login__title">Enter Your Email to Get updates</h3>
 
         <div class="login__field">
           <i class="ri-user-line"></i>
-          <input type="text" placeholder="Username or Email" name="username" class="login__input" required>
+          <input type="text" placeholder="Enter your Email" name="username" class="login__input" required>
         </div>
 
-        <div class="login__field">
+        <!-- <div class="login__field">
           <i class="ri-lock-password-line"></i>
           <input type="password" placeholder="Password" name="password" class="login__input" required>
-        </div>
+        </div> -->
 
         <div class="login__actions">
-          <button type="submit" class="login__button">Log In</button>
-          <a href="#" class="login__link" id="toggle-form">Sign Up</a>
-          <a href="#" class="login__link">Forgot Password?</a>
+          <button type="submit" class="login__button">Join us</button>
+          <!-- <a href="#" class="login__link" id="toggle-form">Sign Up</a> -->
+          <!-- <a href="#" class="login__link">Forgot Password?</a> -->
         </div>
       </form>
 
-      <form action="/signup" method="post" class="login__form" id="signup-form" style="display: none;">
+      <!-- <form action="/signup" method="post" class="login__form" id="signup-form" style="display: none;">
         <h3 class="login__title">Create an Account</h3>
 
         <div class="login__field">
@@ -287,7 +287,7 @@
           <button type="submit" class="login__button">Sign Up</button>
           <a href="#" class="login__link" id="toggle-form-back">Log In</a>
         </div>
-      </form>
+      </form> -->
     </div>
   </div>
 </section>
