@@ -1,83 +1,102 @@
-from flask import Flask, request, jsonify, flash, redirect, url_for, render_template
-import pandas as pd
+from flask import Flask, flash, redirect, render_template, request, jsonify, url_for
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.secret_key = 'secret123'
-EXCEL_FILE_trading = 'trading_data.xlsx'
-EXCEL_FILE_Users = "UserData.xlsx"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trading.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-def save_to_excel(data, sheet_name,FileName):
-    # Check if the file exists
-    try:
-        # Try to read existing data
-        old_data = pd.read_excel(FileName, sheet_name=sheet_name, engine='openpyxl')
-        new_data = pd.concat([old_data, data], ignore_index=True)
-    except (FileNotFoundError, ValueError):
-        # If the file or sheet doesn't exist, use new data
-        new_data = data
+migrate = Migrate(app, db)
+app.secret_key = 'nil123'
 
-    # Write the combined data back to the Excel file
-    with pd.ExcelWriter(FileName, engine='openpyxl', mode='w') as writer:
-        new_data.to_excel(writer, sheet_name=sheet_name, index=False)
+class TradingSignal(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    buy = db.Column(db.String, nullable=False)
+    target = db.Column(db.String, nullable=False)
+    sl = db.Column(db.String, nullable=False)
+    status = db.Column(db.String, nullable=False, default='Pending')
+    indexName = db.Column(db.String, nullable=False)
+    IndexToken = db.Column(db.String, nullable=False)
 
-def read_from_excel(sheet_name,FileName):
-    try:
-        df = pd.read_excel(FileName, sheet_name=sheet_name, engine='openpyxl')
-        return df
-    except (FileNotFoundError, ValueError) as e:
-        print(f"Error reading sheet: {e}")
-        return pd.DataFrame()
+    def __repr__(self):
+        return f'<Trading Signal {self.name}>'
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now())
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+
+
 
 @app.route('/api/trading_signal', methods=['POST'])
 def add_trading_signal():
     data = request.json
-    df = pd.DataFrame([{
-        'Name': data['name'],
-        'Buy': data['buy'],
-        'Target': data['target'],
-        'Stop Loss': data['sl'],
-        'Status': data['Status'],
-        'Index Name': data['indexName'],
-        'Index Token': data['IndexToken'],
-        'Created At': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    }])
-    save_to_excel(df, 'Trading Signals',EXCEL_FILE_trading)
-    if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
-        return jsonify({'message': 'Trading signal added to Excel'}), 201
-    else:
-        flash('Trading signal added successfully!', 'success')
-        return redirect(url_for('home'))
+    new_signal = TradingSignal(
+        name=data['name'],
+        buy=data['buy'],
+        target=data['target'],
+        sl=data['sl'],
+        status=data['Status'],
+        indexName=data['indexName'],
+        IndexToken=data['IndexToken']
+    )
+    db.session.add(new_signal)
+    db.session.commit()
+    return jsonify({'message': 'Trading signal added', 'id': new_signal.id}), 201
 
 @app.route('/api/user', methods=['POST'])
 def add_user():
-    data = request.form
-    df = pd.DataFrame([{
-        'Username': data.get('username'),
-        'Email': data.get('email'),
-        'Created At': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    }])
-    save_to_excel(df, 'Users',EXCEL_FILE_Users)
-    if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
-        return jsonify({'message': 'User added to Excel'}), 201
+    email = request.form.get('username')
+    if email:
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('You are already subscribed!', 'info')
+        else:
+            new_user = User(username="Prelaunch", email=email)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Thank you for subscribing!', 'success')
     else:
-        flash('User added successfully!', 'success')
-        return redirect(url_for('home'))
+        flash('Please enter a valid email address.', 'error')
+    return redirect(url_for('home'))
 
 @app.route('/api/trading_signals', methods=['GET'])
 def get_trading_signals():
-    df = read_from_excel('Trading Signals',EXCEL_FILE_trading)
-    return jsonify(df.to_dict(orient='records')), 200
+    signals = TradingSignal.query.all()
+    results = [{
+        'id': signal.id,
+        'name': signal.name,
+        'buy': signal.buy,
+        'target': signal.target,
+        'sl': signal.sl,
+        'status': signal.status,
+        'indexName': signal.indexName,
+        'IndexToken': signal.IndexToken
+    } for signal in signals]
+    return jsonify(results), 200
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
-    df = read_from_excel('Users',EXCEL_FILE_Users)
-    return jsonify(df.to_dict(orient='records')), 200
+    users = User.query.all()
+    results = [{
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+        'created_at': user.created_at.isoformat()
+    } for user in users]
+    return jsonify(results), 200
+
 
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
