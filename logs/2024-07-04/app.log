@@ -1,0 +1,3 @@
+[I 240704 10:47:23 Trading:154] Subscribing with details: abc123, 1, [{'exchangeType': 1, 'tokens': ['99926000', '99926009', '99926037']}]
+[I 240704 10:51:54 Trading:154] Subscribing with details: abc123, 1, [{'exchangeType': 1, 'tokens': ['99926000', '99926009', '99926037']}]
+[I 240704 11:01:08 Trading:154] Subscribing with details: abc123, 1, [{'exchangeType': 1, 'tokens': ['99926000', '99926009', '99926037']}]
