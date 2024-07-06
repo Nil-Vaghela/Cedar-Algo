@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, jsonify, url_for
+from flask import Flask, abort, flash, redirect, render_template, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
@@ -91,6 +91,19 @@ def get_users():
     } for user in users]
     return jsonify(results), 200
 
+@app.route('/api/trading_signal/<int:id>/edit_status', methods=['PATCH'])
+def edit_trading_signal_status(id):
+    data = request.json
+    trading_signal = TradingSignal.query.get(id)
+    if not trading_signal:
+        abort(404, description="Trading Signal not found.")
+    
+    if 'status' in data:
+        trading_signal.status = data['status']
+        db.session.commit()
+        return jsonify({'message': 'Trading signal status updated', 'id': trading_signal.id}), 200
+    else:
+        abort(400, description="No status provided.")
 
 @app.route('/')
 def home():
