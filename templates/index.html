@@ -230,66 +230,58 @@
   <h2 class="section__title">
     Interested in AI Trading? <br> Join Us
   </h2>
-
   <div class="login__container">
-    <!-- <img src="static/img/login.png" alt="Login Image" class="login__img"> -->
-    
-    <div class="login__content">
-      <form action="/api/user" method="post" class="login__form" id="login-form">
-        <h3 class="login__title">Enter Your Email to Get updates</h3>
+   <div class="login__content">
+       <!-- Login Form -->
+       <form action="/loginreq" method="post" class="login__form" id="login-form">
+           <h3 class="login__title">Enter Your Email to Get Updates</h3>
+           <div class="login__field">
+               <i class="ri-user-line"></i>
+               <input type="text" placeholder="Enter your Email" name="username" class="login__input" required>
+           </div>
+           <div class="login__field">
+               <i class="ri-lock-password-line"></i>
+               <input type="password" placeholder="Password" name="password" class="login__input" required>
+           </div>
+           <div class="login__actions">
+               <button type="submit" class="login__button">Join Us</button>
+               <a href="#" class="login__link" id="show-signup">Sign Up</a>
+               <a href="#" class="login__link">Forgot Password?</a>
+           </div>
+       </form>
 
-        <div class="login__field">
-          <i class="ri-user-line"></i>
-          <input type="text" placeholder="Enter your Email" name="username" class="login__input" required>
-        </div>
+       <!-- Signup Form -->
+       <form action="/signupreq" method="post" class="login__form hidden" id="signup-form">
+           <h3 class="login__title">Create an Account</h3>
+           <div class="login__field">
+               <i class="ri-user-line"></i>
+               <input type="text" placeholder="First Name" name="first_name" class="login__input" required>
+           </div>
+           <div class="login__field">
+               <i class="ri-user-line"></i>
+               <input type="text" placeholder="Last Name" name="last_name" class="login__input" required>
+           </div>
+           <div class="login__field">
+               <i class="ri-mail-line"></i>
+               <input type="email" placeholder="Email" name="email" class="login__input" required>
+           </div>
+           <div class="login__field">
+               <i class="ri-lock-password-line"></i>
+               <input type="password" placeholder="Password" name="password" class="login__input" required>
+           </div>
+           <div class="login__field">
+               <i class="ri-lock-password-line"></i>
+               <input type="password" placeholder="Confirm Password" name="confirm_password" class="login__input" required>
+           </div>
+           <div class="login__actions">
+               <button type="submit" class="login__button">Sign Up</button>
+               <a href="#" class="login__link" id="show-login">Log In</a>
+           </div>
+       </form>
+   </div>
+</div>
 
-        <!-- <div class="login__field">
-          <i class="ri-lock-password-line"></i>
-          <input type="password" placeholder="Password" name="password" class="login__input" required>
-        </div> -->
 
-        <div class="login__actions">
-          <button type="submit" class="login__button">Join us</button>
-          <!-- <a href="#" class="login__link" id="toggle-form">Sign Up</a> -->
-          <!-- <a href="#" class="login__link">Forgot Password?</a> -->
-        </div>
-      </form>
-
-      <!-- <form action="/signup" method="post" class="login__form" id="signup-form" style="display: none;">
-        <h3 class="login__title">Create an Account</h3>
-
-        <div class="login__field">
-          <i class="ri-user-line"></i>
-          <input type="text" placeholder="First Name" name="first_name" class="login__input" required>
-        </div>
-
-        <div class="login__field">
-          <i class="ri-user-line"></i>
-          <input type="text" placeholder="Last Name" name="last_name" class="login__input" required>
-        </div>
-
-        <div class="login__field">
-          <i class="ri-mail-line"></i>
-          <input type="email" placeholder="Email" name="email" class="login__input" required>
-        </div>
-
-        <div class="login__field">
-          <i class="ri-lock-password-line"></i>
-          <input type="password" placeholder="Password" name="password" class="login__input" required>
-        </div>
-
-        <div class="login__field">
-          <i class="ri-lock-password-line"></i>
-          <input type="password" placeholder="Confirm Password" name="confirm_password" class="login__input" required>
-        </div>
-
-        <div class="login__actions">
-          <button type="submit" class="login__button">Sign Up</button>
-          <a href="#" class="login__link" id="toggle-form-back">Log In</a>
-        </div>
-      </form> -->
-    </div>
-  </div>
 </section>
 
       <!--==================== FOOTER ====================-->
@@ -351,7 +343,7 @@
          </div>
        
          <span class="footer__copy">
-           &#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.2
+           &#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.3
          </span>
        </footer>
 

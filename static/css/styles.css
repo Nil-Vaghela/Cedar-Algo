@@ -801,6 +801,10 @@ img {
   align-items: center;
   justify-content: center;
   background-color: var(--body-color);
+  padding: 2rem; /* Added to give space around the container */
+  width: 100%; /* Use full width on smaller screens */
+  max-width: 500px; /* Limits the maximum width */
+  margin: auto;
 }
 
 .login__img {
@@ -810,11 +814,12 @@ img {
 
 .login__content {
   width: 100%;
-  max-width: 560px;
+  max-width: 460px;
   background: var(--container-color);
   padding: 4rem;
   border-radius: 1rem;
   box-shadow: 0 0 48px hsla(93, 54%, 54%, .4);
+  margin: 1rem; /* Space between form and other content */
 }
 
 .login__form {
@@ -825,7 +830,7 @@ img {
 .login__title {
   font-size: var(--h2-font-size);
   color: var(--title-color);
-  margin-bottom: 1rem;
+  margin-bottom: 2rem; /* More space below the title */
   text-align: center;
 }
 
@@ -837,13 +842,15 @@ img {
   border: 2px solid var(--first-color-light); /* Light green border */
   border-radius: 0.5rem;
   overflow: hidden;
-  padding: 0.5rem; /* Add padding to ensure proper alignment */
+  padding: 0.75rem 1rem; /* Increased padding for better alignment */
+  height: 50px;
+  
 }
 
 .login__field i {
   font-size: 1.5rem;
   color: var(--first-color); /* Use the theme's primary color for icons */
-  padding: 0 1rem; /* Adjust padding for the icon */
+  margin-right: 1rem; /* Space between icon and input */
 }
 
 .login__input {
@@ -858,16 +865,17 @@ img {
 }
 
 .login__button {
-  width: 100%;
-  padding: 1rem; /* Increase padding for better click area */
-  font-size: var(--normal-font-size);
-  font-weight: var(--font-bold);
-  color: var(--white-color);
-  background-color: var(--first-color); /* Primary color for the button */
+  background-color: var(--first-color); /* Your existing green color */
+  color: var(--white-color); /* Text color */
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 4px;
+  padding: 10px 20px; /* Adjust padding as needed */
+  text-align: center;
+  width: 100%; /* Adjust width to fit your design needs */
+  display: block;
   cursor: pointer;
-  transition: background-color 0.3s;
+  text-decoration: none;
+  font-size: 0.9rem;
 }
 
 .login__button:hover {
@@ -881,7 +889,8 @@ img {
   cursor: pointer;
   transition: color 0.3s;
   display: block; /* Ensure links are on separate lines */
-  margin-top: 0.5rem; /* Add some space above the links */
+  margin-top: 1rem; /* Increased space above the links */
+  height: 40px;
 }
 
 .login__link:hover {
@@ -891,9 +900,12 @@ img {
 /* Ensure responsiveness on smaller screens */
 @media screen and (max-width: 576px) {
   .login__content {
-    padding: 1.5rem;
+    padding: 2rem; /* Reduce padding on smaller screens */
   }
   .login__button {
-    padding: 10px 0;
+    padding: 0.75rem; /* Reduce padding of button for smaller devices */
   }
+}
+.hidden {
+  display: none !important;
 }

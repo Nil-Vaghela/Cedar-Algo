@@ -1,0 +1,211 @@
+/*=============== GOOGLE FONTS ===============*/
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+
+/*=============== VARIABLES CSS ===============*/
+:root {
+  --header-height: 3.5rem;
+  --first-color: hsl(93, 54%, 54%);
+  --first-color-alt: hsl(93, 50%, 48%);
+  --first-color-light: hsl(93, 58%, 66%);
+  --title-color: hsl(228, 8%, 98%);
+  --text-color: hsl(228, 8%, 70%);
+  --text-color2: hsl(0, 0%, 0%);
+  --white-color: hsl(228, 8%, 98%);
+  --black-color: hsl(228, 6%, 4%);
+  --body-color: hsl(0, 0%, 0%);
+  --container-color: hsl(0, 0%, 0%);
+  --shadow-img: 0 0 48px hsla(93, 54%, 54%, .4);
+  --gradient-card: linear-gradient(180deg, hsla(93, 8%, 8%), hsla(93, 40%, 30%));
+  --body-font: "Montserrat", sans-serif;
+  --biggest-font-size: 2.25rem;
+  --h1-font-size: 1.5rem;
+  --h2-font-size: 1.25rem;
+  --h3-font-size: 1rem;
+  --normal-font-size: .938rem;
+  --small-font-size: .813rem;
+  --font-regular: 400;
+  --font-semi-bold: 600;
+  --font-bold: 700;
+  --z-tooltip: 10;
+  --z-fixed: 100;
+}
+
+/*=============== BASE ===============*/
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+  background-color: var(--body-color);
+  color: var(--text-color);
+}
+
+h1, h2, h3, h4 {
+  color: var(--title-color);
+  font-weight: var(--font-semi-bold);
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: var(--title-color);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/*=============== REUSABLE CSS CLASSES ===============*/
+.container {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 0 20px;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.section {
+  padding: 5rem 0;
+}
+
+.section__title {
+  font-size: var(--h1-font-size);
+  font-weight: var(--font-bold);
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--title-color);
+}
+
+.main {
+  overflow: hidden;
+}
+
+/*=============== HEADER & NAV ===============*/
+.header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: var(--black-color);
+  z-index: var(--z-fixed);
+  padding: 10px 20px;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav__logo {
+  font-weight: var(--font-bold);
+  color: var(--first-color);
+}
+
+.nav__list {
+  display: flex;
+  gap: 20px;
+}
+
+.nav__link {
+  font-weight: var(--font-semi-bold);
+  transition: color .3s;
+}
+
+.nav__link:hover,
+.active-link {
+  color: var(--first-color);
+}
+
+/*=============== BUTTONS ===============*/
+.button {
+  background-color: var(--first-color);
+  color: var(--white-color);
+  font-weight: var(--font-bold);
+  padding: 10px 20px;
+  border-radius: 25px;
+  display: inline-flex;
+  align-items: center;
+  column-gap: 10px;
+  transition: background-color .3s;
+}
+
+.button:hover {
+  background-color: var(--first-color-alt);
+}
+
+.button span {
+  display: inline-block;
+}
+
+.button__link {
+  color: var(--white-color);
+  font-weight: var(--font-bold);
+}
+
+.button__link:hover {
+  color: var(--first-color-light);
+}
+
+/*=============== FOOTER ===============*/
+.footer {
+  background-color: var(--black-color);
+  color: var(--white-color);
+  padding: 20px;
+  text-align: center;
+}
+/*=============== TEXT PADDING ===============*/
+p, li {
+    padding: 0.5rem 0; /* Adds vertical padding for better spacing */
+}
+
+h1, h2, h3, h4 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem; /* Adds space above and below headings */
+}
+
+/* Enhance list item display */
+li {
+    margin-bottom: 0.5rem; /* Additional space between list items */
+}
+
+.article {
+    line-height: 1.6; /* Improves readability by increasing line height of text */
+    margin-bottom: 1.5rem; /* Adds space below each article section */
+}
+
+.blog__post {
+    padding: 2rem; /* Adds padding inside blog post container */
+    background-color: var(--container-color); /* Optional: adds a distinct background color */
+    border-radius: 8px; /* Optional: rounds the corners of the blog post container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds subtle shadow for depth */
+}
+
+/*=============== SECTION PADDING ===============*/
+.section {
+    padding: 5rem 1rem; /* Increases padding within each section for more space */
+}
+
+/* Enhancements for the footer */
+.footer {
+    padding: 2rem 1rem; /* Adjusts padding in the footer for better spacing */
+    background-color: var(--black-color);
+    color: var(--white-color);
+    text-align: center;
+}

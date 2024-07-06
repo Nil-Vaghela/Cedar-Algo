@@ -82,15 +82,17 @@ sr.reveal(`.shop__card`, {interval: 100})
 
 
 /*=============== Sign Up Form ===============*/
-document.getElementById('toggle-form').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('signup-form').style.display = 'block';
-  });
+
   
-  document.getElementById('toggle-form-back').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'block';
-  });
-  
+  document.getElementById('show-signup').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default anchor click behavior
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('signup-form').classList.remove('hidden');
+});
+
+document.getElementById('show-login').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default anchor click behavior
+    document.getElementById('signup-form').classList.add('hidden');
+    document.getElementById('login-form').classList.remove('hidden');
+});
+
