@@ -28,8 +28,8 @@ class TradingSignal(db.Model):
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=False, nullable=False)
+    email = db.Column(db.String(120), unique=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
 
     def __repr__(self):
@@ -57,14 +57,10 @@ def add_trading_signal():
 def add_user():
     email = request.form.get('username')
     if email:
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            flash('You are already subscribed!', 'info')
-        else:
-            new_user = User(username="Prelaunch", email=email)
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Thank you for subscribing!', 'success')
+        new_user = User(username="Prelaunch", email=email)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Thank you for subscribing!', 'success')
     else:
         flash('Please enter a valid email address.', 'error')
     return redirect(url_for('home'))
