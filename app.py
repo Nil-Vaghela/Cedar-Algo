@@ -7,10 +7,12 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nill!6992@cedartrading.chyem684wzw8.us-east-1.rds.amazonaws.com:5432/cedartrading'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 app.secret_key = 'nil123'
 
 class TradingSignal(db.Model):
+    __tablename__ = 'trading_signal'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     buy = db.Column(db.String, nullable=False)
@@ -24,6 +26,7 @@ class TradingSignal(db.Model):
         return f'<Trading Signal {self.name}>'
 
 class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
