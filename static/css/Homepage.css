@@ -5,6 +5,12 @@
 /*=============== VARIABLES CSS ===============*/
 :root {
   --header-height: 3.5rem;
+  --yellow-color: #ffdd57;
+  --yellow-glow: rgba(255, 221, 87, 0.75);
+  --green-color: #4CAF50;
+  --green-glow: rgba(76, 175, 80, 0.75);
+  --red-color: #F44336;
+  --red-glow: rgba(244, 67, 54, 0.75);
   /*========== Colors ==========*/
   /*Color mode HSL(hue, saturation, lightness)*/
   --first-color: hsl(93, 54%, 54%);
@@ -18,9 +24,25 @@
   --body-color: hsl(228, 6%, 8%);
   --container-color: hsl(228, 6%, 12%);
   --shadow-img: 0 0 48px hsla(93, 54%, 54%, .4);
+  --Yellow-color-light:  rgb(220, 120, 43);
+  --red-color-light: hsla(0, 100%, 30%);
   --gradient-card: linear-gradient(180deg,
                                 hsla(93, 8%, 8%),
                                 hsla(93, 40%, 30%));
+                                --gradient-card-green: linear-gradient(180deg,
+                                hsla(93, 8%, 8%),
+                                rgb(99, 197, 20));
+  --gradient-card-yellow: linear-gradient(180deg,
+                                hsla(93, 8%, 8%),  /* Lighter Yellow */
+                                rgb(220, 120, 43)); /* Darker Yellow */
+                                --gradient-card-red: linear-gradient(180deg,
+                                     hsla(93, 8%, 8%),  /* Lighter Red */
+                                     hsla(0, 100%, 30%)); /* Darker Red */
+                                
+                          
+
+
+                        
 
   /*========== Font and typography ==========*/
   /*.5rem = 8px | 1rem = 16px ...*/
@@ -937,7 +959,7 @@ img {
 /* Description of each card */
 .trading__description {
   font-size: var(--normal-font-size);
-  color: var(--text-color);
+  color: var(--white-color);
   margin-bottom: 1rem;
 }
 
@@ -972,3 +994,36 @@ img {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Pending status */
+.trading__card--pending {
+  background: var(--gradient-card-yellow);
+  border: 2px solid var(--Yellow-color-light);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+/* Target hit status */
+.trading__card--target-hit {
+  background: var(--gradient-card-green);
+  border: 2px solid var(--first-color-light);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+/* Stop loss hit status */
+.trading__card--sl-hit {
+  background: var(--gradient-card-red);
+  border: 2px solid var(--red-color-light);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+/* Color definitions */

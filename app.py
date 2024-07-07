@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required
 
 from loginSignup import Login
+from TradingSignals import tradingsignals
 
 
 
@@ -22,7 +23,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 app.secret_key = 'nil123'
 
@@ -45,13 +46,28 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(512))  # Adjusted for length as per previous discussion
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.id)  # convert the id to a string
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -108,7 +124,6 @@ def get_users():
         'id': user.id,
         'username': user.username,
         'email': user.email,
-        'created_at': user.created_at.isoformat()
     } for user in users]
     return jsonify(results), 200
 
@@ -136,7 +151,9 @@ def Blog():
 
 @app.route('/HomePage')
 def HomePage():
-    return render_template('HomePage.html')
+
+    TradingData = tradingsignals.GetTradingSignals.TradingSignals()
+    return render_template('HomePage.html',trading_data=TradingData)
 
 
 
@@ -149,6 +166,7 @@ def signupReq():
     else:
         db.session.add(SignUPData)
         db.session.commit()
+        login_user(SignUPData)
         return redirect(url_for('HomePage'))
     
 @app.route('/loginreq', methods=['POST'])
@@ -159,6 +177,16 @@ def loginReq():
          return "Wrong Username or Password"
     else:
          login_user(LoginData)
+         return redirect(url_for('HomePage'))
+
+
+@app.route('/api/stock/<int:id>', methods=['DELETE'])
+def delete_stock(id):
+    stock = TradingSignal.query.get_or_404(id)
+    db.session.delete(stock)
+    db.session.commit()
+    return jsonify({'message': 'Stock deleted successfully'}), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)

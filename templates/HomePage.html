@@ -62,26 +62,26 @@
             <h2 class="section__title">Trading Signals</h2>
           
             {% if trading_data %}
-                {% for key, items in trading_data.items() %}
+              {% for key, items in trading_data.items() %}
                 <div class="trading__category">
-                    <h3 class="trading__title">{{ key }}</h3>
-                    <div class="trading__container">
-                        {% for item in items %}
-                        <article class="trading__card">
-                            <p class="trading__description">Name: {{ item.name }}</p>
-                            <p class="trading__description">Buy at: {{ item.buy }}</p>
-                            <p class="trading__description">Target: {{ item.target }}</p>
-                            <p class="trading__description">Stop Loss: {{ item.sl }}</p>
-                            <p class="trading__description">Status: {{ item.Status }}</p>
-                        </article>
-                        {% endfor %}
-                    </div>
+                  <h3 class="trading__title">{{ key }}</h3>
+                  <div class="trading__container">
+                    {% for item in items %}
+                      <article class="{% if item.status == 'Pending' %}trading__card--pending{% elif item.status == 'Target Hit' %}trading__card--target-hit{% elif item.status == 'SL Hit' %}trading__card--sl-hit{% endif %}">
+                        <p class="trading__description">Name: {{ item.name }}</p>
+                        <p class="trading__description">Buy at: {{ item.buy }}</p>
+                        <p class="trading__description">Target: {{ item.target }}</p>
+                        <p class="trading__description">Stop Loss: {{ item.sl }}</p>
+                        <p class="trading__description">Status: {{ item.status }}</p>
+                      </article>
+                    {% endfor %}
+                  </div>
                 </div>
-                {% endfor %}
+              {% endfor %}
             {% else %}
-                <p>No trading data available.</p>
+              <p>No trading data available.</p>
             {% endif %}
-        </section>
+          </section>
         
 
           
@@ -160,5 +160,64 @@
 
             <!--=============== MAIN JS ===============-->
             <script src="static/js/main.js"></script>
+            <script>
+
+               
+document.addEventListener('DOMContentLoaded', function() {
+    const apiUrl = 'https://www.cedaralgo.in/api/trading_signals';
+    let lastData = [];
+
+    function fetchData() {
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (isDataChanged(data)) {
+                    console.log('Data updated, refreshing UI...');
+                    updateUI(data);
+                    lastData = data; // Update the stored data snapshot
+                } else {
+                    console.log('No changes in data.');
+                }
+            })
+            .catch(error => {
+                console.error('Failed to fetch data:', error);
+                // Optionally implement retry logic or alert user
+            });
+    }
+
+    function isDataChanged(newData) {
+        if (newData.length !== lastData.length) {
+            return true; // Data length changed
+        }
+        return newData.some((item, index) => {
+            const oldItem = lastData[index];
+            return !oldItem || oldItem.status !== item.status;
+        });
+    }
+
+    function updateUI(data) {
+        const container = document.querySelector('.trading__container');
+        container.innerHTML = ''; // Clear the existing content
+        data.forEach(item => {
+            const article = document.createElement('article');
+            article.className = `trading__card trading__card--${item.status.toLowerCase()}`;
+            article.innerHTML = `
+                <p class="trading__description">Name: ${item.name}</p>
+                <p class="trading__description">Buy at: ${item.buy}</p>
+                <p class="trading__description">Target: ${item.target}</p>
+                <p class="trading__description">Stop Loss: ${item.sl}</p>
+                <p class="trading__description">Status: ${item.status}</p>
+            `;
+            container.appendChild(article);
+        });
+    }
+
+    // Start fetching data immediately and set a reasonable interval for updates
+    fetchData();
+    setInterval(fetchData, 30000); // Update every 30 seconds
+});
+
+
+            </script>
    </body>
 </html>
