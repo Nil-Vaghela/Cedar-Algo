@@ -1,6 +1,8 @@
 import requests
+import re  # Import regex module
 
-class GetTradingSignals():
+class GetTradingSignals:
+    @staticmethod
     def TradingSignals():
         url = "https://www.cedaralgo.in/api/trading_signals"
         trading_data = {}
@@ -12,10 +14,14 @@ class GetTradingSignals():
             trading_signals = response.json()
 
             if trading_signals:
-        # Organize data by indexName
-                
                 for signal in trading_signals:
                     index_name = signal['indexName']
+                    # Regex to extract the strike price and the type (PE or CE) by skipping the first two digits
+                    match = re.search(r'\d{2}(\d+)(PE|CE)', signal['name'])
+                    if match:
+                        formatted_name = f"{match.group(1)} {match.group(2)}"  # Format like '24450 PE'
+                        signal['name'] = formatted_name  # Update the name in the signal
+
                     if index_name in trading_data:
                         trading_data[index_name].append(signal)
                     else:
@@ -31,4 +37,4 @@ class GetTradingSignals():
         except requests.exceptions.Timeout as errt:
             print("Timeout Error:", errt)
         except requests.exceptions.RequestException as err:
-            print("OOps: Something Else", err)
+            print("Oops: Something Else", err)

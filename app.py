@@ -187,6 +187,28 @@ def delete_stock(id):
     db.session.commit()
     return jsonify({'message': 'Stock deleted successfully'}), 200
 
+# @app.route('/api/stock', methods=['DELETE'])
+# def delete_all_stocks():
+#     try:
+#         # Fetch all trading signals from the database
+#         all_stocks = TradingSignal.query.all()
+        
+#         # Check if there are any trading signals to delete
+#         if not all_stocks:
+#             return jsonify({'message': 'No stocks to delete'}), 404
+        
+#         # Delete all trading signals
+#         for stock in all_stocks:
+#             db.session.delete(stock)
+        
+#         # Commit the changes to the database
+#         db.session.commit()
+        
+#         return jsonify({'message': 'All stocks deleted successfully'}), 200
+#     except Exception as e:
+#         # Handle exceptions and return an error message
+#         return jsonify({'error': 'Failed to delete stocks', 'message': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)

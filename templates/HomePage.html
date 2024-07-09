@@ -1,223 +1,113 @@
 <!DOCTYPE html>
-   <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-      <!--=============== FAVICON ===============-->
-      <link rel="shortcut icon" href="static/img/favicon.png" type="image/x-icon">
-
-      <!--=============== REMIXICONS ===============-->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
-
-      <!--=============== CSS ===============-->
-      <link rel="stylesheet" href="static/css/Homepage.css">
-
-      <title>The Cactus AlgoTrading</title>
-   </head>
-   <body>
-      <!--==================== HEADER ====================-->
-      <header class="header" id="header">
-         <nav class="nav container">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--=============== FAVICON ===============-->
+    <link rel="shortcut icon" href="static/img/favicon.png" type="image/x-icon">
+    <!--=============== REMIXICONS ===============-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="static/css/Homepage.css">
+    <title>Cedar Algo Trading</title>
+</head>
+<body>
+    <!--==================== HEADER ====================-->
+    <header class="header" id="header">
+        <nav class="nav container">
             <a href="#" class="nav__logo">
-               <i class="ri-cactus-line"></i> Cactus AlgoTrading
+                <i class="ri-bar-chart-line"></i> Cedar Algo Trading
             </a>
-
             <div class="nav__menu" id="nav-menu">
-               <ul class="nav__list">
-                  <li class="nav__item">
-                     <a href="#home" class="nav__link active-link">Home</a>
-                  </li>
-
-                  <li class="nav__item">
-                     <a href="#care" class="nav__link">Profile</a>
-                  </li>
-
-                  <li class="nav__item">
-                     <a href="#contact" class="nav__link">Wallet</a>
-                  </li>
-               </ul>
-
-               <!-- Close button -->
-               <div class="nav__close" id="nav-close">
-                  <i class="ri-close-line"></i>
-               </div>
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="#home" class="nav__link active-link">Home</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="#care" class="nav__link">Profile</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="#contact" class="nav__link">Wallet</a>
+                    </li>
+                </ul>
+                <!-- Close button -->
+                <div class="nav__close" id="nav-close">
+                    <i class="ri-close-line"></i>
+                </div>
             </div>
-
             <div class="nav__actions">
-            
-               <!-- Toggle button -->
-               <div class="nav__toggle" id="nav-toggle">
-                  <i class="ri-menu-line"></i>
-               </div>
+                <!-- Toggle button -->
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class="ri-menu-line"></i>
+                </div>
             </div>
-         </nav>
-      </header>
-
-      <!--==================== MAIN ====================-->
-      <main class="main">
-
-         <!-- Trading Signals Section for Nifty -->
-         <section class="section" id="trading">
+        </nav>
+    </header>
+    <!--==================== MAIN ====================-->
+    <main class="main">
+        <!-- Trading Signals Section for Nifty -->
+        <section class="section" id="trading">
             <h2 class="section__title">Trading Signals</h2>
-          
             {% if trading_data %}
-              {% for key, items in trading_data.items() %}
-                <div class="trading__category">
-                  <h3 class="trading__title">{{ key }}</h3>
-                  <div class="trading__container">
+            {% for key, items in trading_data.items() %}
+            <div class="trading__category">
+                <h3 class="trading__title">{{ key }}</h3>
+                <div class="trading__container">
                     {% for item in items %}
-                      <article class="{% if item.status == 'Pending' %}trading__card--pending{% elif item.status == 'Target Hit' %}trading__card--target-hit{% elif item.status == 'SL Hit' %}trading__card--sl-hit{% endif %}">
-                        <p class="trading__description">Name: {{ item.name }}</p>
+                    <article class="{% if item.status == 'Pending' %}trading__card--pending{% elif item.status == 'Target Hit' %}trading__card--target-hit{% elif item.status == 'SL Hit' %}trading__card--sl-hit{% endif %}">
+                        
+                        <p class="trading__description">{{ item.indexName }} {{ item.name }}</p>
                         <p class="trading__description">Buy at: {{ item.buy }}</p>
                         <p class="trading__description">Target: {{ item.target }}</p>
                         <p class="trading__description">Stop Loss: {{ item.sl }}</p>
                         <p class="trading__description">Status: {{ item.status }}</p>
-                      </article>
+                    </article>
                     {% endfor %}
-                  </div>
                 </div>
-              {% endfor %}
+            </div>
+            {% endfor %}
             {% else %}
-              <p>No trading data available.</p>
+            <p>No trading data available.</p>
             {% endif %}
-          </section>
-        
-
-          
-          
-          
-             <!--==================== FOOTER ====================-->
-            <footer class="footer">
-                <div class="footer__container container grid">
+        </section>
+    </main>
+    <!--==================== FOOTER ====================-->
+    <footer class="footer">
+        <div class="footer__container container grid">
+            <div>
+                <a href="#" class="footer__logo">
+                    <i class="ri-bar-chart-line"></i> Cedar Algo Trading
+                </a>
+                <p class="new__description">This platform is for educational purposes only.<br> Trading involves significant risk and may not be suitable for all investors.<br> Please consult with a financial advisor before making any investment decisions.</p>
+            </div>
+            <div class="footer__content grid">
                 <div>
-                    <a href="#" class="footer__logo">
-                    <i class="ri-bar-chart-line"></i> Cactus AlgoTrading
-                    </a>
-                    <p class="new__description">This platform is for educational purposes only.<br> Trading involves significant risk and may not be suitable for all investors.<br> Please consult with a financial advisor before making any investment decisions.</p>
-                </div>
-            
-                <div class="footer__content grid">
-                    <div>
                     <h3 class="footer__title">COMPANY</h3>
                     <ul class="footer__links">
-                        <li>
-                        <a href="#" class="footer__link">About Us</a>
-                        </li>
-                        <li>
-                        <a href="#" class="footer__link">Services</a>
-                        </li>
-                        <li>
-                        <a href="#" class="footer__link">Features</a>
-                        </li>
+                        <li><a href="#" class="footer__link">About Us</a></li>
+                        <li><a href="#" class="footer__link">Services</a></li>
+                        <li><a href="#" class="footer__link">Features</a></li>
                     </ul>
-                    </div>
-            
-                    <div>
+                </div>
+                <div>
                     <h3 class="footer__title">INFORMATION</h3>
                     <ul class="footer__links">
-                        <li>
-                        <a href="#" class="footer__link">Blogs & News</a>
-                        </li>
-                        <li>
-                        <a href="#" class="footer__link">Contact Us</a>
-                        </li>
-                        <li>
-                        <a href="#" class="footer__link">FAQs</a>
-                        </li>
+                        <li><a href="#" class="footer__link">Blogs & News</a></li>
+                        <li><a href="#" class="footer__link">Contact Us</a></li>
+                        <li><a href="#" the class="footer__link">FAQs</a></li>
                     </ul>
-                    </div>
-            
-                    <!-- <div>
-                    <h3 class="footer__title">SOCIAL MEDIA</h3>
-                    <div class="footer__social">
-                        <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
-                        <i class="ri-facebook-circle-fill"></i>
-                        </a>
-                        <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
-                        <i class="ri-instagram-fill"></i>
-                        </a>
-                        <a href="https://twitter.com/" target="_blank" class="footer__social-link">
-                        <i class="ri-twitter-line"></i>
-                        </a>
-                    </div>
-                    </div> -->
                 </div>
-                </div>
-            
-                <span class="footer__copy">
-                &#169; 2024 Cactus AlgoTrading. All Rights Reserved. 
-                </span>
-            </footer>
-
-            <!--========== SCROLL UP ==========-->
-            <a href="#" class="scrollup" id="scroll-up">
-                <i class="ri-arrow-up-line"></i>
-            </a>
-
-            <!--=============== SCROLLREVEAL ===============-->
-            <script src="static/js/scrollreveal.min.js"></script>
-
-            <!--=============== MAIN JS ===============-->
-            <script src="static/js/main.js"></script>
-            <script>
-
-               
-document.addEventListener('DOMContentLoaded', function() {
-    const apiUrl = 'https://www.cedaralgo.in/api/trading_signals';
-    let lastData = [];
-
-    function fetchData() {
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (isDataChanged(data)) {
-                    console.log('Data updated, refreshing UI...');
-                    updateUI(data);
-                    lastData = data; // Update the stored data snapshot
-                } else {
-                    console.log('No changes in data.');
-                }
-            })
-            .catch(error => {
-                console.error('Failed to fetch data:', error);
-                // Optionally implement retry logic or alert user
-            });
-    }
-
-    function isDataChanged(newData) {
-        if (newData.length !== lastData.length) {
-            return true; // Data length changed
-        }
-        return newData.some((item, index) => {
-            const oldItem = lastData[index];
-            return !oldItem || oldItem.status !== item.status;
-        });
-    }
-
-    function updateUI(data) {
-        const container = document.querySelector('.trading__container');
-        container.innerHTML = ''; // Clear the existing content
-        data.forEach(item => {
-            const article = document.createElement('article');
-            article.className = `trading__card trading__card--${item.status.toLowerCase()}`;
-            article.innerHTML = `
-                <p class="trading__description">Name: ${item.name}</p>
-                <p class="trading__description">Buy at: ${item.buy}</p>
-                <p class="trading__description">Target: ${item.target}</p>
-                <p class="trading__description">Stop Loss: ${item.sl}</p>
-                <p class="trading__description">Status: ${item.status}</p>
-            `;
-            container.appendChild(article);
-        });
-    }
-
-    // Start fetching data immediately and set a reasonable interval for updates
-    fetchData();
-    setInterval(fetchData, 30000); // Update every 30 seconds
-});
-
-
-            </script>
-   </body>
+            </div>
+        </div>
+        <span class="footer__copy">&#169; 2024 Cedar Algo Trading. All Rights Reserved.</span>
+    </footer>
+    <!--========== SCROLL UP ==========-->
+    <a href="#" class="scrollup" id="scroll-up">
+        <i class="ri-arrow-up-line"></i>
+    </a>
+    <!--=============== SCROLLREVEAL ===============-->
+    <script src="static/js/scrollreveal.min.js"></script>
+    <!--=============== MAIN JS ===============-->
+    <script src="static/js/main.js"></script>
+</body>
 </html>
