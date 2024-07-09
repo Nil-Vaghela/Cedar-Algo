@@ -20,6 +20,7 @@ migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = '/'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -150,6 +151,7 @@ def Blog():
     return render_template('BlogPage.html')
 
 @app.route('/HomePage')
+@login_required
 def HomePage():
 
     TradingData = tradingsignals.GetTradingSignals.TradingSignals()
