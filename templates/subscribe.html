@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe | Cedar AlgoTrading</title>
+    <link rel="stylesheet" href="static/css/subscribe.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="#" class="nav__logo">
+                <i class="ri-cactus-line"></i> Cedar AlgoTrading
+             </a>
+ 
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="subscription section" id="subscribe">
+            <h1 class="section__title">Choose Your Subscription Plan</h1>
+            <form action="/subscribe" method="POST">
+            <div class="container grid">
+                <!-- Basic Plan -->
+                <div class="plan">
+                    <h2 class="plan__title">Basic</h2>
+                    <p class="plan__price">₹2,999 <span>/ month</span></p>
+                    <ul class="plan__features">
+                        <li>Access to basic trading signals</li>
+                        <li>Email support</li>
+                        <li>AI - ALGO TRADING</li>
+                    </ul>
+                    <button class="button">Coming Soon</button>
+                </div>
+                <!-- Advanced Plan -->
+                <div class="plan">
+                    <h2 class="plan__title">Advanced</h2>
+                    <p class="plan__price">₹7,999 <span>/ 6 months</span></p>
+                    <ul class="plan__features">
+                        <li>Advanced trading signals</li>
+                        <li>Priority email support</li>
+                        <li>AI - ALGO TRADING</li>
+                    </ul>
+                    <button class="button">Coming Soon</button>
+                </div>
+                <!-- Pro Plan -->
+                <div class="plan">
+                    <h2 class="plan__title">Pro</h2>
+                    <p class="plan__price">₹14,999 <span>/ year</span></p>
+                    <ul class="plan__features">
+                        <li>All-inclusive trading signals</li>
+                        <li>24/7 support</li>
+                        <li>AI - ALGO TRADING</li>
+                    </ul>
+                    <button class="button">Coming Soon</button>
+                </div>
+                
+                <div class="plan">
+                    <h2 class="plan__title">BETA ACCESS</h2>
+                    <p class="plan__price">₹999 <span>/ Month</span></p>
+                    <ul class="plan__features">
+                        <li>All-inclusive trading signals</li>
+                        <li>24/7 support</li>
+                    </ul>
+                    <input type="hidden" name="plan_id" value="beta_access">
+                    <input type="hidden" name="amount" value="99900"> 
+                    <button class="button" type="button" onclick="makePayment()">Pay Now</button>
+                </div>
+            
+            </div>
+        </form>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials section">
+            <h1 class="section__title">Testimonials</h1>
+            <div class="container grid">
+                <div class="testimonial">
+                    <p>"The Pro plan has significantly enhanced my trading strategy. Highly recommend for serious traders."</p>
+                    <cite>— Alicia Smith</cite>
+                </div>
+                <div class="testimonial">
+                    <p>"Fantastic customer support and reliable signals. Made my first profitable trade within a week!"</p>
+                    <cite>— Rahul Mehta</cite>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__container container grid">
+          <div>
+            <a href="#" class="footer__logo">
+              <i class="ri-bar-chart-line"></i> Cedar AlgoTrading
+            </a>
+            <p class="new__description">This platform is for educational purposes only.<br> Trading involves significant risk and may not be suitable for all investors.<br> Please consult with a financial advisor before making any investment decisions.</p>
+          </div>
+      
+          <div class="footer__content grid">
+            <div>
+              <h3 class="footer__title">COMPANY</h3>
+              <ul class="footer__links">
+                <li>
+                  <a href="#" class="footer__link">About Us</a>
+                </li>
+                <li>
+                  <a href="#" class="footer__link">Services</a>
+                </li>
+                <li>
+                  <a href="#" class="footer__link">Features</a>
+                </li>
+              </ul>
+            </div>
+      
+            <div>
+              <h3 class="footer__title">INFORMATION</h3>
+              <ul class="footer__links">
+                <li>
+                  <a href="/Blog" class="footer__link">Blogs & News</a>
+                </li>
+                <li>
+                  <a href="#" class="footer__link">Contact Us</a>
+                </li>
+                <li>
+                  <a href="#" class="footer__link">FAQs</a>
+                </li>
+              </ul>
+            </div>
+      
+            <!-- <div>
+              <h3 class="footer__title">SOCIAL MEDIA</h3>
+              <div class="footer__social">
+                <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
+                  <i class="ri-facebook-circle-fill"></i>
+                </a>
+                <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
+                  <i class="ri-instagram-fill"></i>
+                </a>
+                <a href="https://twitter.com/" target="_blank" class="footer__social-link">
+                  <i class="ri-twitter-line"></i>
+                </a>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      
+        <span class="footer__copy">
+          &#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.3
+        </span>
+      </footer>
+
+
+      <script>
+        function makePayment() {
+            fetch('/pay', {
+                method: 'POST',
+            })
+            .then((response) => response.json())
+            .then((order) => {
+                var options = {
+                    "key": "{{ rzp_test_PpfEtizXdw3rfT }}", // Enter the Key ID generated from the Dashboard
+                    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                    "currency": order.currency,
+                    "name": "Cedar Algo Trading",
+                    "description": "Beta Access For Month",
+                    "image": "https://www.cedaralgo.in/static/img/care-cactus.png",
+                    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                    "handler": function (response){
+                        alert('Payment successful. Payment ID: ' + response.razorpay_payment_id);
+                        window.location.href = '/success';
+                    },
+                    "prefill": {
+                        "name": "Cedar Algo Trading",
+                        "email": "Support@Cedar.in",
+                        "contact": "9999999999"
+                    },
+                    "notes": {
+                        "address": "Razorpay Corporate Office"
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        }
+    </script>
+
+      
+</body>
+
+</html>

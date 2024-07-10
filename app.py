@@ -1,14 +1,16 @@
 from flask import Flask, abort, flash, redirect, render_template, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from flask_migrate import Migrate
+import pytz
+import razorpay
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 from loginSignup import Login
 from TradingSignals import tradingsignals
-
+from SubscriberModel import Subscription
 
 
 
@@ -21,6 +23,10 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = '/'
+
+
+client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF"))
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -47,32 +53,35 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(512))  # Adjusted for length as per previous discussion
+    password_hash = db.Column(db.String(512))
+    subscription_end_date = db.Column(db.DateTime, default=None) 
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
+    
     @property
     def is_authenticated(self):
         return True
-
+    
+    def get_id(self):
+        """Return the email address to satisfy Flask-Login's requirements."""
+        return str(self.id)
+    
     @property
     def is_active(self):
-        return True
-
-    @property
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return str(self.id)  # convert the id to a string
+        """Check if the user's subscription is active."""
+        return self.subscription_end_date and self.subscription_end_date > datetime.now()
 
     def __repr__(self):
         return f'<User {self.username}>'
 
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, int(user_id))
 
 
 @app.route('/api/trading_signal', methods=['POST'])
@@ -98,9 +107,9 @@ def add_user():
         new_user = User(username="Prelaunch", email=email)
         db.session.add(new_user)
         db.session.commit()
-        flash('Thank you for subscribing!', 'success')
+        print('Thank you for subscribing!', 'success')
     else:
-        flash('Please enter a valid email address.', 'error')
+        print('Please enter a valid email address.', 'error')
     return redirect(url_for('home'))
 
 @app.route('/api/trading_signals', methods=['GET'])
@@ -153,9 +162,18 @@ def Blog():
 @app.route('/HomePage')
 @login_required
 def HomePage():
+    trading_data = {}
+    signals = TradingSignal.query.all()  # Assuming this fetches all trading signals
+    for signal in signals:
+        if signal.indexName not in trading_data:
+            trading_data[signal.indexName] = []
+        trading_data[signal.indexName].append(signal)
 
-    TradingData = tradingsignals.GetTradingSignals.TradingSignals()
-    return render_template('HomePage.html',trading_data=TradingData)
+    if not User.is_active:
+        print('Your subscription has expired. Please renew.', 'warning')
+        return redirect(url_for('subscribe'))
+
+    return render_template('HomePage.html', trading_data=trading_data)
 
 
 
@@ -172,14 +190,95 @@ def signupReq():
         return redirect(url_for('HomePage'))
     
 @app.route('/loginreq', methods=['POST'])
-def loginReq():
+def login():
     data = request.form
-    LoginData = Login.LoginPage.login(data,User)
-    if LoginData == "Wrong Username Or Password":
-         return "Wrong Username or Password"
+    user = User.query.filter_by(email=data['email']).first()
+    if user and user.check_password(data['password']):
+        login_user(user, remember=True)  # Optionally add 'remember=True' if you want to remember the login session
+        if user.is_active:
+            return redirect(url_for('HomePage'))
+        else:
+            flash('Your subscription has expired. Please renew to continue.', 'warning')
+            return redirect(url_for('subscribe'))  # Ensure this URL is correctly defined in your app
     else:
-         login_user(LoginData)
-         return redirect(url_for('HomePage'))
+        flash('Invalid username or password.', 'error')
+        return redirect(url_for('login'))  # Ensure this URL is correctly defined in your app
+
+
+
+@app.route('/subscribe', methods=['GET', 'POST'])
+@login_required
+def subscribe():
+    # if request.method == 'POST':
+    #     plan_id = request.form['plan_id']
+    #     amount = int(request.form['amount'])  # Convert amount to integer
+
+    #     order = Subscription.PaymentModel.handle_payment(amount)
+    #     if 'id' in order:
+    #         if Subscription.PaymentModel.verify_payment(order['id'], 'simulated_payment_id', 'simulated_signature'):
+    #             # Update the user's subscription details here
+    #             print('Subscription updated successfully!', 'success')
+    #             return redirect(url_for('HomePage'))
+    #         else:
+    #             print('Payment verification failed.', 'error')
+    #     else:
+    #         print(f'Failed to initiate payment: {order}', 'error')
+    return render_template('subscribe.html')
+
+
+@app.route('/pay', methods=['POST'])
+def pay():
+    # Payment data
+    payment_data = {
+        "amount": 99900,  # Amount in smallest currency unit e.g. paise for INR
+        "currency": "INR",
+        "receipt": "order_rcptid_11",
+        "notes": {
+            "note_key_1": "Tea, Earl Grey, Hot",
+            "note_key_2": "Make it so."
+        }
+    }
+
+    # Create order
+    order = client.order.create(data=payment_data)
+    if not order:
+        return jsonify({'error': 'Cannot create order'}), 500
+
+    return jsonify(order)
+
+@app.route('/success')
+@login_required
+def payment_success():
+    try:
+        current_user.subscription_end_date = datetime.now() + timedelta(days=30)
+        db.session.commit()  # Make sure to commit changes
+        flash('Payment successful! Subscription is updated.', 'success')
+        return redirect(url_for('HomePage'))
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while updating your subscription: {str(e)}', 'error')
+        return redirect(url_for('subscribe'))
+
+
+@app.route('/verify_payment', methods=['POST'])
+def verify_payment():
+    data = request.get_json()
+    verified = client.utility.verify_payment_signature(data)
+    if verified:
+        user_id = data['user_id']
+        user = User.query.get(user_id)
+        if user:
+            user.subscription_end_date = datetime.now() + timedelta(days=30)
+            db.session.add(user)  # This might be redundant if the user is already tracked
+            db.session.commit()
+            flash('Payment verified successfully! Subscription is updated.', 'success')
+            return jsonify({'success': True, 'message': 'Payment verified successfully'})
+        else:
+            return jsonify({'error': 'User not found'}), 404
+    else:
+        flash('Payment verification failed.', 'error')
+        return jsonify({'success': False, 'message': 'Payment verification failed'}), 400
+
 
 
 @app.route('/api/stock/<int:id>', methods=['DELETE'])
@@ -188,6 +287,7 @@ def delete_stock(id):
     db.session.delete(stock)
     db.session.commit()
     return jsonify({'message': 'Stock deleted successfully'}), 200
+
 
 # @app.route('/api/stock', methods=['DELETE'])
 # def delete_all_stocks():
@@ -213,4 +313,5 @@ def delete_stock(id):
 
 
 if __name__ == '__main__':
+
     app.run(host='0.0.0.0', port=8000, debug=True)
