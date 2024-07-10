@@ -7,15 +7,15 @@
   --header-height: 3.5rem;
   --yellow-color: #ffdd57;
   --yellow-glow: rgba(255, 221, 87, 0.75);
-  --green-color: #4CAF50;
-  --green-glow: rgba(76, 175, 80, 0.75);
+  --green-color: hsl(145, 63%, 42%);
+  --green-glow: hsl(145, 63%, 42%);
   --red-color: #F44336;
   --red-glow: rgba(244, 67, 54, 0.75);
   /*========== Colors ==========*/
   /*Color mode HSL(hue, saturation, lightness)*/
-  --first-color: hsl(93, 54%, 54%);
-  --first-color-alt: hsl(93, 50%, 48%);
-  --first-color-light: hsl(93, 58%, 66%);
+  --first-color: hsl(145, 63%, 42%);
+  --first-color-alt: hsl(145, 63%, 42%);
+  --first-color-light: hsl(145, 63%, 42%);
   --title-color: hsl(228, 8%, 98%);
   --text-color: hsl(228, 8%, 70%);
   --text-color2: hsl(0, 0%, 0%);
@@ -28,7 +28,7 @@
   --red-color-light: hsla(0, 100%, 30%);
   --gradient-card: linear-gradient(180deg,
                                 hsla(93, 8%, 8%),
-                                hsla(93, 40%, 30%));
+                                hsl(145, 63%, 42%));
                                 --gradient-card-green: linear-gradient(180deg,
                                 hsla(93, 8%, 8%),
                                 rgb(99, 197, 20));

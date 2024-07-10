@@ -177,6 +177,7 @@ def HomePage():
 
 
 
+
 @app.route('/signupreq', methods=['POST'])
 def signupReq():
     data = request.form
@@ -310,6 +311,32 @@ def delete_stock(id):
 #     except Exception as e:
 #         # Handle exceptions and return an error message
 #         return jsonify({'error': 'Failed to delete stocks', 'message': str(e)}), 500
+
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+@app.route('/pricing')
+def pricing():
+    return render_template('subscribe.html')
+
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+@app.route('/refund')
+def refund():
+    return render_template('refund.html')
 
 
 if __name__ == '__main__':

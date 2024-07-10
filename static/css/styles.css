@@ -6,9 +6,9 @@
   --header-height: 3.5rem;
   /*========== Colors ==========*/
   /*Color mode HSL(hue, saturation, lightness)*/
-  --first-color: hsl(93, 54%, 54%);
-  --first-color-alt: hsl(93, 50%, 48%);
-  --first-color-light: hsl(93, 58%, 66%);
+  --first-color: #27ae60;
+  --first-color-alt: #27ae60;
+  --first-color-light: #28aa5e;
   --title-color: hsl(228, 8%, 98%);
   --text-color: hsl(228, 8%, 70%);
   --text-color2: hsl(0, 0%, 0%);
@@ -16,10 +16,10 @@
   --black-color: hsl(228, 6%, 4%);
   --body-color: hsl(228, 6%, 8%);
   --container-color: hsl(228, 6%, 12%);
-  --shadow-img: 0 0 48px hsla(93, 54%, 54%, .4);
+  --shadow-img: 0 0 48px hsl(145, 63%, 70%);
   --gradient-card: linear-gradient(180deg,
-                                hsla(93, 8%, 8%),
-                                hsla(93, 40%, 30%));
+                                rgb(25, 31, 22),
+                                hsl(145, 63%, 42%));
 
   /*========== Font and typography ==========*/
   /*.5rem = 8px | 1rem = 16px ...*/
@@ -818,7 +818,7 @@ img {
   background: var(--container-color);
   padding: 4rem;
   border-radius: 1rem;
-  box-shadow: 0 0 48px hsla(93, 54%, 54%, .4);
+  box-shadow: 0 0 48px hsl(145, 63%, 42%);
   margin: 1rem; /* Space between form and other content */
 }
 
