@@ -1,3 +1,4 @@
+from urllib.parse import urljoin, urlparse
 from flask import Flask, abort, flash, redirect, render_template, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta, timezone
@@ -17,13 +18,14 @@ from SubscriberModel import Subscription
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nill!6992@cedartrading.chyem684wzw8.us-east-1.rds.amazonaws.com:5432/cedartrading'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = '/'
-app.config['PREFERRED_URL_SCHEME'] = 'https'
+
 
 
 
@@ -192,24 +194,31 @@ def signupReq():
         login_user(SignUPData)
         return redirect(url_for('HomePage'))
     
-@app.route('/loginreq', methods=['POST'])
-def login():
-    if request.method == "POST":
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
-        data = request.form
-        user = User.query.filter_by(email=data['email']).first()
-        if user and user.check_password(data['password']):
-            login_user(user, remember=True)  # Optionally add 'remember=True' if you want to remember the login session
-            if user.is_active:
-                return redirect(url_for('HomePage'))
-            else:
-                flash('Your subscription has expired. Please renew to continue.', 'warning')
-                return redirect(url_for('subscribe'))  # Ensure this URL is correctly defined in your app
+@app.route('/loginreq', methods=['POST'])
+def loginreq():
+    data = request.form
+    user = User.query.filter_by(email=data['email']).first()
+
+    if user and user.check_password(data['password']):
+        login_user(user, remember=True)
+
+        if user.is_active:
+            next_page = request.args.get('next')
+            if not next_page or not is_safe_url(next_page):
+                next_page = url_for('HomePage')
+            return redirect(next_page)
         else:
-            flash('Invalid username or password.', 'error')
-            return redirect(url_for('login'))  # Ensure this URL is correctly defined in your app
+            flash('Your subscription has expired. Please renew to continue.', 'warning')
+            return redirect(url_for('subscribe'))
     else:
-        return redirect(url_for('home'))
+        flash('Invalid username or password.', 'error')
+        return redirect(url_for('loginreq'))
+
 
 
 
