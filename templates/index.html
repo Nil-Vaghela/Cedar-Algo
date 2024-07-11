@@ -16,6 +16,10 @@
       <title>Cedar AlgoTrading | Best Algo Trading Software | Best Algo Trading Platform | AI Trading BOT</title>
    </head>
    <body>
+
+
+    
+
       <!--==================== HEADER ====================-->
       <header class="header" id="header">
          <nav class="nav container">
@@ -65,6 +69,25 @@
       <!--==================== MAIN ====================-->
       <main class="main">
          <!--==================== HOME ====================-->
+
+
+         {% with messages = get_flashed_messages(with_categories=true) %}
+         {% if messages %}
+             {% set last_category, last_message = messages[-1] %}
+             <div class="popup-alert">
+                 <div class="alert alert-{{ last_category }} alert-dismissible fade show" role="alert">
+                     {{ last_message }}
+                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                     </button>
+                 </div>
+             </div>
+             <script>
+                 document.getElementById('modalOverlay').style.display = 'block'; // Show the overlay
+             </script>
+         {% endif %}
+     {% endwith %}
+   
          <section class="home section" id="home">
             <div class="home__container container grid">
                <img src="static/img/StockHomee.png" alt="image" class="home__img">
@@ -351,5 +374,29 @@
 
       <!--=============== MAIN JS ===============-->
       <script src="static/js/main.js"></script>
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+      <script>
+         $(document).ready(function() {
+             // Close the alert and hide the overlay after 3 seconds
+             setTimeout(function() {
+                 $(".alert").alert('close');
+                 $('#modalOverlay').hide();
+             }, 5000); // 3000 milliseconds = 3 seconds
+         
+             // This function will close the alert and hide the overlay when the close button is clicked
+             $(".close").click(function() {
+                 $(".alert").alert('close');
+                 $('#modalOverlay').hide();
+             });
+         });
+         </script>
+      
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
    </body>
 </html>

@@ -185,7 +185,8 @@ def signupReq():
         db.session.add(SignUPData)
         db.session.commit()
         login_user(SignUPData)
-        return redirect(url_for('HomePage'))
+        flash("Welcome To Cedar Club, Please Login With your account Details")
+        return redirect(url_for('home'))
     
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -206,7 +207,7 @@ def loginreq():
                 return redirect(url_for('subscribe'))  # Redirect to subscription page if the subscription is expired
         else:
             flash('Invalid username or password.', 'error')
-            return redirect(url_for('loginreq'))  # Redirect back to the login page on failure
+            return redirect(url_for('home'))  # Redirect back to the login page on failure
     else:
         return redirect(url_for('home')) 
 
