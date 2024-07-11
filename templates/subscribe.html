@@ -20,7 +20,7 @@
     <main class="main">
         <section class="subscription section" id="subscribe">
             <h1 class="section__title">Choose Your Subscription Plan</h1>
-            <form action="/subscribe" method="POST">
+            
             <div class="container grid">
                 <!-- Basic Plan -->
                 <div class="plan">
@@ -65,11 +65,11 @@
                     </ul>
                     <input type="hidden" name="plan_id" value="beta_access">
                     <input type="hidden" name="amount" value="99900"> 
-                    <button class="button" type="button" onclick="makePayment()">Pay Now</button>
+                    <button class="button" type="button" onclick="checkSessionAndPay()">Pay Now</button>
                 </div>
             
             </div>
-        </form>
+        
         </section>
 
         <!-- Testimonials Section -->
@@ -152,6 +152,21 @@
 
 
       <script>
+
+
+function checkSessionAndPay() {
+    fetch('/api/check_session')
+    .then(response => {
+        if (response.status === 200) {
+            makePayment();  // User is logged in, proceed with payment
+        } else {
+            alert('Your session has expired. Please log in again.');
+            window.location.href = '/login';  // Redirect to login
+        }
+    })
+    .catch(error => console.error('Failed to check session', error));
+}
+
         function makePayment() {
             fetch('/pay', {
                 method: 'POST',

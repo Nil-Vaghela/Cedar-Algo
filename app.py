@@ -202,43 +202,33 @@ def is_safe_url(target):
 
 @app.route('/loginreq', methods=['POST'])
 def loginreq():
-    data = request.form
-    user = User.query.filter_by(email=data['email']).first()
-
-    if user and user.check_password(data['password']):
-        login_user(user, remember=True)
-
-        if user.is_active:
-            next_page = request.args.get('next')
-            if not next_page or not is_safe_url(next_page):
-                next_page = url_for('HomePage')
-            return redirect(next_page)
+    if request.method == "POST":
+        data = request.form
+        user = User.query.filter_by(email=data['email']).first()
+        if user and user.check_password(data['password']):
+            login_user(user, remember=True)  # Optionally add 'remember=True' if you want to remember the login session
+            if user.is_active:
+                return redirect(url_for('HomePage'))  # Always redirect to the HomePage after login
+            else:
+                flash('Your subscription has expired. Please renew to continue.', 'warning')
+                return redirect(url_for('subscribe'))  # Redirect to subscription page if the subscription is expired
         else:
-            flash('Your subscription has expired. Please renew to continue.', 'warning')
-            return render_template("subscribe.html")
+            flash('Invalid username or password.', 'error')
+            return redirect(url_for('loginreq'))  # Redirect back to the login page on failure
     else:
-        flash('Invalid username or password.', 'error')
-        return redirect(url_for('loginreq'))
+        return redirect(url_for('home')) 
+
+@app.route('/api/check_session', methods=['GET'])
+def check_session():
+    if current_user.is_authenticated:
+        return jsonify({'status': 'authenticated'}), 200
+    else:
+        return jsonify({'status': 'unauthenticated'}), 401
 
 
-
-@app.route('/subscribe', methods=['GET', 'POST'])
+@app.route('/subscribe')
 @login_required
 def subscribe():
-    # if request.method == 'POST':
-    #     plan_id = request.form['plan_id']
-    #     amount = int(request.form['amount'])  # Convert amount to integer
-
-    #     order = Subscription.PaymentModel.handle_payment(amount)
-    #     if 'id' in order:
-    #         if Subscription.PaymentModel.verify_payment(order['id'], 'simulated_payment_id', 'simulated_signature'):
-    #             # Update the user's subscription details here
-    #             print('Subscription updated successfully!', 'success')
-    #             return redirect(url_for('HomePage'))
-    #         else:
-    #             print('Payment verification failed.', 'error')
-    #     else:
-    #         print(f'Failed to initiate payment: {order}', 'error')
     return render_template('subscribe.html')
 
 
@@ -263,7 +253,6 @@ def pay():
     return jsonify(order)
 
 @app.route('/success')
-@login_required
 def payment_success():
     try:
         current_user.subscription_end_date = datetime.now() + timedelta(days=30)
