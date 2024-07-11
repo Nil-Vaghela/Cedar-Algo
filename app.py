@@ -18,13 +18,14 @@ from SubscriberModel import Subscription
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nill!6992@cedartrading.chyem684wzw8.us-east-1.rds.amazonaws.com:5432/cedartrading'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 app.config['PREFERRED_URL_SCHEME'] = 'https'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'loginreq'
+login_manager.login_view = '/'
 
 
 
@@ -214,11 +215,10 @@ def loginreq():
             return redirect(next_page)
         else:
             flash('Your subscription has expired. Please renew to continue.', 'warning')
-            return redirect(url_for('subscribe'))
+            return render_template("subscribe.html")
     else:
         flash('Invalid username or password.', 'error')
         return redirect(url_for('loginreq'))
-
 
 
 
