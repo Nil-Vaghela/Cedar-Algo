@@ -23,6 +23,8 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = '/'
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+
 
 
 client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF"))
@@ -192,18 +194,22 @@ def signupReq():
     
 @app.route('/loginreq', methods=['POST'])
 def login():
-    data = request.form
-    user = User.query.filter_by(email=data['email']).first()
-    if user and user.check_password(data['password']):
-        login_user(user, remember=True)  # Optionally add 'remember=True' if you want to remember the login session
-        if user.is_active:
-            return redirect(url_for('HomePage'))
+    if request.method == "POST":
+
+        data = request.form
+        user = User.query.filter_by(email=data['email']).first()
+        if user and user.check_password(data['password']):
+            login_user(user, remember=True)  # Optionally add 'remember=True' if you want to remember the login session
+            if user.is_active:
+                return redirect(url_for('HomePage'))
+            else:
+                flash('Your subscription has expired. Please renew to continue.', 'warning')
+                return redirect(url_for('subscribe'))  # Ensure this URL is correctly defined in your app
         else:
-            flash('Your subscription has expired. Please renew to continue.', 'warning')
-            return redirect(url_for('subscribe'))  # Ensure this URL is correctly defined in your app
+            flash('Invalid username or password.', 'error')
+            return redirect(url_for('login'))  # Ensure this URL is correctly defined in your app
     else:
-        flash('Invalid username or password.', 'error')
-        return redirect(url_for('login'))  # Ensure this URL is correctly defined in your app
+        return redirect(url_for('home'))
 
 
 
