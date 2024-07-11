@@ -30,7 +30,7 @@ login_manager.login_view = '/'
 
 
 
-client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF"))
+client = razorpay.Client(auth=("rzp_live_8kQ21NWsMXOu2S", "Q6rWc0EoKLmODmLKzAvKvz2S"))
 
 
 @login_manager.user_loader
