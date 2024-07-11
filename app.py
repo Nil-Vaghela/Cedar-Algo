@@ -132,15 +132,7 @@ def get_trading_signals():
     } for signal in signals]
     return jsonify(results), 200
 
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    results = [{
-        'id': user.id,
-        'username': user.username,
-        'email': user.email,
-    } for user in users]
-    return jsonify(results), 200
+
 
 @app.route('/api/trading_signal/<int:id>/edit_status', methods=['PATCH'])
 def edit_trading_signal_status(id):
@@ -283,6 +275,29 @@ def verify_payment():
     else:
         flash('Payment verification failed.', 'error')
         return jsonify({'success': False, 'message': 'Payment verification failed'}), 400
+
+
+
+@app.route('/api/user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'User deleted successfully'}), 200
+
+
+@app.route('/api/users', methods=['GET'])
+def get_all_users():
+    users = User.query.all()
+    results = [{
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+        'is_active': user.is_active,
+        'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None
+    } for user in users]
+    return jsonify(results), 200
+
 
 
 
