@@ -24,7 +24,7 @@ login_manager.login_view = 'login'
 
 client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF"))
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
@@ -37,17 +37,27 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
+
+    @property
+    def is_authenticated(self):
+        """Return True if the user is authenticated."""
+        return True
+
     @property
     def is_active(self):
         """User is active if their subscription has not expired or is not set (None)."""
         if self.subscription_end_date is None:
-            return False  # Consider users with no end date as always active
+            return False  # If no end date, consider the user always active.
         return self.subscription_end_date > datetime.now()
-    
-    def is_authenticated(self):
-        return True
-        
+
+    @property
+    def is_anonymous(self):
+        """Always return False, as anonymous users aren't supported."""
+        return False
+
+    def get_id(self):
+        """Return the email address to satisfy Flask-Login's requirements."""
+        return str(self.id) 
 
 class TradingSignal(db.Model):
     __tablename__ = 'trading_signal'
@@ -63,7 +73,7 @@ class TradingSignal(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
 
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 
@@ -183,6 +193,7 @@ def login():
         db.session.add(LoginData)
         db.session.commit()
         login_user(LoginData,remember=True)
+        print(current_user.is_authenticated)
         if current_user.is_active :
             return redirect(url_for('HomePage'))
         else:
@@ -192,13 +203,14 @@ def login():
 
 @app.route('/api/check_session', methods=['GET'])
 def check_session():
-    if current_user.is_authenticated:
+    if User.is_authenticated:
         return jsonify({'status': 'authenticated'}), 200
     else:
         return jsonify({'status': 'unauthenticated'}), 401
 
 
 @app.route('/subscribe')
+@login_required
 def subscribe():
     return render_template('subscribe.html')
 
