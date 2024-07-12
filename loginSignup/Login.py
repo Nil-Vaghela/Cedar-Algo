@@ -7,7 +7,7 @@ class LoginPage():
 
 
     def login(request):
-        loginUrl = "http://localhost:8000/api/login"
+        loginUrl = "http://www.cedaralgo.in/api/login"
         email = request['email']
         password = request['password']
         userdata = {
@@ -20,7 +20,7 @@ class LoginPage():
 
 
     def signup(request):
-        signup_url = "http://localhost:8000/api/signup"
+        signup_url = "http://www.cedaralgo.in/api/signup"
 
         FirstName = request['first_name']
         LastName = request["last_name"]
