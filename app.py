@@ -145,7 +145,12 @@ def login():
 def signupreq():
     data = request.form
     signup = Login.LoginPage.signup(data)
-    return signup
+    if signup.status_code == 200:
+        flash("Welcome to Cedar Club, Please login Again to access your Account")
+        return redirect(url_for('home'))
+    else:
+        flash("Please Try Again")
+        return redirect(url_for('home'))
 
 @app.route('/loginreq', methods=['POST'])
 def loginreq():
