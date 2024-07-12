@@ -416,6 +416,27 @@ def refund():
     return render_template('refund.html')
 
 
+user_credentials = {
+    "api_key": "SecretKey",
+    "Username": "N274681",
+    "pin": "6499",
+    "totp": "2AMWG2Z2FZ3ZOFBJATC7EFDWFY"
+}
+
+@app.route('/AlgoSetup', methods=['GET', 'POST'])
+def AlgoSetup():
+    if request.method == 'POST':
+        # Update user credentials based on form input
+        user_credentials['api_key'] = request.form.get('api_key', 'None')
+        user_credentials['Username'] = request.form.get('Username', 'None')
+        user_credentials['pin'] = request.form.get('pin', 'None')
+        user_credentials['totp'] = request.form.get('totp', 'None')
+        flash('Settings Updated Successfully!', 'success')
+        return redirect(url_for('AlgoSetup'))
+    
+    return render_template('AlgoSetup.html', credentials=user_credentials)
+
+
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0', port=8000, debug=True)
