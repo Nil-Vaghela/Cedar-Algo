@@ -1,43 +1,53 @@
+import os
+from datetime import datetime, timedelta
 from urllib.parse import urljoin, urlparse
-from flask import Flask, abort, flash, redirect, render_template, request, jsonify, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, abort
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timedelta, timezone
 from flask_migrate import Migrate
-import pytz
-import razorpay
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+import razorpay
 
 from loginSignup import Login
-from TradingSignals import tradingsignals
-from SubscriberModel import Subscription
-
-
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nill!6992@cedartrading.chyem684wzw8.us-east-1.rds.amazonaws.com:5432/cedartrading'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.secret_key = "nil123"
 app.config['PREFERRED_URL_SCHEME'] = 'https'
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = '/'
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
+client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF"))
 
+class User(UserMixin, db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(512))
+    subscription_end_date = db.Column(db.DateTime, nullable=True)
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-client = razorpay.Client(auth=("rzp_live_8kQ21NWsMXOu2S", "Q6rWc0EoKLmODmLKzAvKvz2S"))
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.session.get(User, int(user_id))
-
-app.secret_key = 'nil123'
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    @property
+    def is_active(self):
+        """User is active if their subscription has not expired or is not set (None)."""
+        if self.subscription_end_date is None:
+            return False  # Consider users with no end date as always active
+        return self.subscription_end_date > datetime.now()
+    
+    def is_authenticated(self):
+        return True
+        
 
 class TradingSignal(db.Model):
     __tablename__ = 'trading_signal'
@@ -50,43 +60,11 @@ class TradingSignal(db.Model):
     indexName = db.Column(db.String, nullable=False)
     IndexToken = db.Column(db.String, nullable=False)
 
-    def __repr__(self):
-        return f'<Trading Signal {self.name}>'
-
-class User(db.Model):
-    __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=False, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(512))
-    subscription_end_date = db.Column(db.DateTime, default=None) 
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-    
-    @property
-    def is_authenticated(self):
-        return True
-    
-    def get_id(self):
-        """Return the email address to satisfy Flask-Login's requirements."""
-        return str(self.id)
-    
-    @property
-    def is_active(self):
-        """Check if the user's subscription is active."""
-        return self.subscription_end_date and self.subscription_end_date > datetime.now()
-
-    def __repr__(self):
-        return f'<User {self.username}>'
-
-
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User, int(user_id))
+
+    return User.query.get(int(user_id))
+
 
 
 @app.route('/api/trading_signal', methods=['POST'])
@@ -193,23 +171,24 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
-@app.route('/loginreq', methods=['POST'])
-def loginreq():
-    if request.method == "POST":
-        data = request.form
-        user = User.query.filter_by(email=data['email']).first()
-        if user and user.check_password(data['password']):
-            login_user(user, remember=True)  # Optionally add 'remember=True' if you want to remember the login session
-            if user.is_active:
-                return redirect(url_for('HomePage'))  # Always redirect to the HomePage after login
-            else:
-                flash('Your subscription has expired. Please renew to continue.', 'warning')
-                return redirect(url_for('subscribe'))  # Redirect to subscription page if the subscription is expired
-        else:
-            flash('Invalid username or password.', 'error')
-            return redirect(url_for('home'))  # Redirect back to the login page on failure
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.form
+    LoginData = Login.LoginPage.login(data,User)
+    if LoginData == "Wrong Username Or Password":
+        flash("Welcome To Cedar Club, Please Login With your account Details")
+        return LoginData
     else:
-        return redirect(url_for('home')) 
+        db.session.add(LoginData)
+        db.session.commit()
+        login_user(LoginData,remember=True)
+        if current_user.is_active :
+            return redirect(url_for('HomePage'))
+        else:
+            flash("Your Subscription has expired Please renew to continue")
+            return redirect(url_for('subscribe'))
+
 
 @app.route('/api/check_session', methods=['GET'])
 def check_session():
@@ -220,7 +199,6 @@ def check_session():
 
 
 @app.route('/subscribe')
-@login_required
 def subscribe():
     return render_template('subscribe.html')
 
