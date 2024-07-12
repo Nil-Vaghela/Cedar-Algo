@@ -146,7 +146,7 @@ def signupreq():
     data = request.form
     signup = Login.LoginPage.signup(data)
     if signup.status_code == 201:
-        
+
         flash("Welcome to Cedar Club, Please login Again to access your Account")
         return redirect(url_for('home'))
     else:
@@ -166,21 +166,22 @@ def loginreq():
         test  = login_user(user, remember=True)
         print(test)
         # Check if the subscription has expired
-
         if userdata['subscription_end_date'] is None:
             return redirect(url_for('subscribe'))
-        elif userdata['subscription_end_date'] > datetime.now():
-            return redirect(url_for('subscribe'))
         else:
-            return redirect(url_for('HomePage'))
+            # Assuming subscription_end_date is stored in ISO 8601 format as a string
+            if isinstance(userdata['subscription_end_date'], str):
+                subscription_end_date = datetime.strptime(userdata['subscription_end_date'], "%Y-%m-%dT%H:%M:%S.%f")
+            else:
+                subscription_end_date = userdata['subscription_end_date']
+            
+            # Check if the subscription has expired
+            if subscription_end_date > datetime.now():
+                return redirect(url_for('HomePage'))
+            else:
+                return redirect(url_for('subscribe'))
         
-        # if 'subscription_end_date' in user_info and user_info['subscription_end_date']:
-        #     subscription_end_date = datetime.fromisoformat(user_info['subscription_end_date'])
-        #     if subscription_end_date > datetime.utcnow():
-        #         return redirect(url_for('home'))
-        #     else:
-        #         return redirect(url_for('subscribe'))
-        # return redirect(url_for('HomePage'))
+
     else:
         return jsonify(login_response.json()), login_response.status_code
 
