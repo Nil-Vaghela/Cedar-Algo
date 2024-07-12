@@ -250,16 +250,6 @@ img {
   color: var(--first-color);
 }
 
-.home__title2 {
-  font-size: var(--h1-font-size);
-  font-weight: var(--font-bold);
-  margin-bottom: 1rem;
-}
-
-.home__title2 span {
-  color: var(--first-color);
-}
-
 .home__description {
   margin-bottom: 3rem;
 }
@@ -831,6 +821,15 @@ img {
   box-shadow: 0 0 48px hsl(145, 63%, 42%);
   margin: 1rem; /* Space between form and other content */
 }
+.login__content_inactive {
+    width: 100%;
+    max-width: 460px;
+    background: var(--container-color);
+    padding: 4rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 48px  hsla(0, 100%, 30%);
+    margin: 1rem; /* Space between form and other content */
+  }
 
 .login__form {
   display: grid;

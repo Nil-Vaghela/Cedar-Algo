@@ -11,7 +11,7 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
 
       <!--=============== CSS ===============-->
-      <link rel="stylesheet" href="static/css/styles.css">
+      <link rel="stylesheet" href="static/css/Algo.css">
 
       <title>Cedar AlgoTrading | Best Algo Trading Software | Best Algo Trading Platform | AI Trading BOT</title>
    </head>
@@ -60,15 +60,22 @@
                 Right now we Support Only Angle One <br> Manage Your API Settings
             </h2>
             <div class="login__container">
-                <div class="login__content">
+              <div class="login__content {{ 'login__content_inactive' if credentials['Api_Username'] is none or credentials['api_key'] is none or credentials['pin'] is none or credentials['totp'] is none else 'login__content' }}">
                     <!-- API Settings Form -->
                     <form action="{{ url_for('AlgoSetup') }}" method="post" class="login__form" id="api-settings-form">
-                        <h3 class="login__title">Enter Your API Credentials</h3>
+                        <h3 class="login__title">
+                          {% if None in [credentials.get('Api_Username'), credentials.get('api_key'), credentials.get('pin'), credentials.get('totp'), credentials.get('auth_token'), credentials.get('refresh_token'), credentials.get('feed_token')] %}
+                          Please enter and verify your trading account
+                      {% else %}
+                          Your Account Has been verified
+                      {% endif %}
+                        
+                        </h3>
                         
                         <p class="new__description">Username</p>
                         <div class="login__field">
                             <i class="ri-key-line"></i>
-                            <input type="text" placeholder="Enter your Username" name="Username" class="login__input" required value="{{ credentials['Username'] }}">
+                            <input type="text" placeholder="Enter your Username" name="Api_Username" class="login__input" required value="{{ credentials['Api_Username'] }}">
                         </div>
                         
                         <p class="new__description">API Secret Key</p>

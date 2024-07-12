@@ -5,9 +5,10 @@ from flask import Flask, jsonify, render_template, request, redirect, session, u
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 import razorpay
-
+from Angleone import BrokerLogin
 from loginSignup import Login
 
 app = Flask(__name__)
@@ -38,7 +39,14 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(512))
+    api_key = db.Column(db.String(512))  # Stores API key
+    Api_Username = db.Column(db.String(512))  # Stores API secret
+    pin = db.Column(db.String(100))  # Stores PIN for additional security
+    totp_secret = db.Column(db.String(512))  # Stores TOTP secret for two-factor authentication
     subscription_end_date = db.Column(db.DateTime, nullable=True)
+    auth_token = db.Column(db.String(2048))  # Stores the authorization token
+    refresh_token = db.Column(db.String(2048))  # Stores the refresh token
+    feed_token = db.Column(db.String(2048))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -339,6 +347,7 @@ def verify_payment():
 
 @app.route('/api/user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
+    
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
@@ -350,13 +359,42 @@ def get_all_users():
     users = User.query.all()
     results = [{
         'id': user.id,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
         'username': user.username,
         'email': user.email,
+        'api_key': user.api_key,  # Assuming you want to expose the API key
+        'Api_Username': user.Api_Username,  # Never expose API secrets
+        'pin': user.pin,  # Assuming the PIN should also be secured
+        'totp_secret': user.totp_secret,  # Never expose TOTP secrets
         'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None
     } for user in users]
     return jsonify(results), 200
 
 
+@app.route('/api/user/<int:user_id>', methods=['GET'])
+def get_user_by_id(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(404, description="User not found")
+    
+    user_data = {
+        'id': user.id,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'username': user.username,
+        'Api_Username': user.Api_Username,
+        'email': user.email,
+        'api_key': user.api_key,  # Caution: Sensitive data
+        'auth_token': user.auth_token,  # Caution: Sensitive data
+        'refresh_token': user.refresh_token,  # Caution: Sensitive data
+        'feed_token': user.feed_token,  # Caution: Sensitive data
+        'pin': user.pin,  # Assuming the PIN should also be secured
+        'totp': user.totp_secret,  # Never expose TOTP secrets
+        'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None
+    }
+
+    return jsonify(user_data), 200
 
 
 @app.route('/api/stock/<int:id>', methods=['DELETE'])
@@ -416,26 +454,62 @@ def refund():
     return render_template('refund.html')
 
 
-user_credentials = {
-    "api_key": "SecretKey",
-    "Username": "N274681",
-    "pin": "6499",
-    "totp": "2AMWG2Z2FZ3ZOFBJATC7EFDWFY"
-}
+
+
 
 @app.route('/AlgoSetup', methods=['GET', 'POST'])
 def AlgoSetup():
+
+    user_id = current_user.get_id()
+    url = f"http://localhost:8000/api/user/{user_id}"
+
+    response = requests.get(url)
+    CredentialUser = response.json()
+    
     if request.method == 'POST':
+        user = User.query.get(user_id)
         # Update user credentials based on form input
-        user_credentials['api_key'] = request.form.get('api_key', 'None')
-        user_credentials['Username'] = request.form.get('Username', 'None')
-        user_credentials['pin'] = request.form.get('pin', 'None')
-        user_credentials['totp'] = request.form.get('totp', 'None')
-        flash('Settings Updated Successfully!', 'success')
+        user.Api_Username = request.form.get('Api_Username')
+        user.api_key = request.form.get('api_key')
+        user.pin = request.form.get('pin')
+        user.totp_secret = request.form.get('totp')
+        db.session.commit()
+
+
+        Api_Username  = request.form.get('Api_Username')
+        api_key = request.form.get('api_key')
+        pin = request.form.get('pin')
+        totp = request.form.get('totp')
+
+        # Assuming LoginSmartConnect returns tokens
+        
+        auth_token, refresh_token, feed_token = BrokerLogin.Brokerlogin.login_to_smart_api(totp,Api_Username,pin,api_key)
+        if all([auth_token, refresh_token, feed_token]):
+            user.auth_token = auth_token
+            user.refresh_token = refresh_token
+            user.feed_token = feed_token
+            db.session.commit()
+            flash('Settings Updated Successfully!', 'success')
+        else:
+            flash('Failed to update settings due to API error', 'error')
+
         return redirect(url_for('AlgoSetup'))
     
-    return render_template('AlgoSetup.html', credentials=user_credentials)
+    return render_template('AlgoSetup.html', credentials=CredentialUser)
 
+def store_tokens(user_id, auth_token, refresh_token, feed_token):
+    user = User.query.get(user_id)
+    if user:
+        user.auth_token = auth_token
+        user.refresh_token = refresh_token
+        user.feed_token = feed_token
+        db.session.commit()
+
+def get_tokens(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return user.auth_token, user.refresh_token, user.feed_token
+    return None, None, None
 
 if __name__ == '__main__':
 
