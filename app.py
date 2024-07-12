@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from urllib.parse import urljoin, urlparse
-from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, abort
+from flask import Flask, jsonify, render_template, request, redirect, session, url_for, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -13,20 +13,28 @@ from loginSignup import Login
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nill!6992@cedartrading.chyem684wzw8.us-east-1.rds.amazonaws.com:5432/cedartrading'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = "nil123"
-app.config['PREFERRED_URL_SCHEME'] = 'https'
+app.secret_key = "Nill6992"
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+
+
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+login_manager.init_app(app)
 
 client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF"))
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(512))
@@ -46,10 +54,7 @@ class User(db.Model):
     @property
     def is_active(self):
         """User is active if their subscription has not expired or is not set (None)."""
-        if self.subscription_end_date is None:
-            return False  # If no end date, consider the user always active.
-        return self.subscription_end_date > datetime.now()
-
+        return True
     @property
     def is_anonymous(self):
         """Always return False, as anonymous users aren't supported."""
@@ -57,7 +62,7 @@ class User(db.Model):
 
     def get_id(self):
         """Return the email address to satisfy Flask-Login's requirements."""
-        return str(self.id) 
+        return str(self.id)
 
 class TradingSignal(db.Model):
     __tablename__ = 'trading_signal'
@@ -76,6 +81,102 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 
+@app.route('/api/signup', methods=['POST'])
+def signup():
+    data = request.json
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not first_name or not last_name or not email or not password:
+        return jsonify({'error': 'Missing fields'}), 400
+
+    # Check if email already exists
+    if User.query.filter_by(email=email).first():
+        return jsonify({'error': 'Email already in use'}), 409
+
+    # Create username from first name and last_id
+    last_id = db.session.query(db.func.max(User.id)).scalar()
+    username = f"{first_name}{last_id + 1 if last_id else 1}"
+
+    new_user = User(
+        first_name=first_name,
+        last_name=last_name,
+        username=username,
+        email=email
+    )
+    new_user.set_password(password)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'User registered successfully', 'user_id': new_user.id}), 201
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'error': 'Both email and password are required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    
+    if user and user.check_password(password):
+
+        login_user(user, remember=True)
+        user_info = {
+            'user_id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'email': user.email,
+            'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None
+        }
+        return jsonify({'message': 'Login successful', 'user': user_info}), 200
+    else:
+        return jsonify({'error': 'Invalid credentials'}), 401
+
+
+
+@app.route('/signupreq', methods=['POST'])
+def signupreq():
+    data = request.form
+    signup = Login.LoginPage.signup(data)
+    return signup
+
+@app.route('/loginreq', methods=['POST'])
+def loginreq():
+    data = request.form
+    login_response = Login.LoginPage.login(data,)
+    if login_response.status_code == 200:
+        user_info = login_response.json()
+        session['user_info'] = user_info['user']  # Storing user info in session
+        userdata = user_info['user'] 
+
+        user = User.query.filter_by(email=userdata['email']).first()
+        test  = login_user(user, remember=True)
+        print(test)
+        # Check if the subscription has expired
+
+        if userdata['subscription_end_date'] is None:
+            return redirect(url_for('subscribe'))
+        elif userdata['subscription_end_date'] > datetime.now():
+            return redirect(url_for('subscribe'))
+        else:
+            return redirect(url_for('HomePage'))
+        
+        # if 'subscription_end_date' in user_info and user_info['subscription_end_date']:
+        #     subscription_end_date = datetime.fromisoformat(user_info['subscription_end_date'])
+        #     if subscription_end_date > datetime.utcnow():
+        #         return redirect(url_for('home'))
+        #     else:
+        #         return redirect(url_for('subscribe'))
+        # return redirect(url_for('HomePage'))
+    else:
+        return jsonify(login_response.json()), login_response.status_code
 
 @app.route('/api/trading_signal', methods=['POST'])
 def add_trading_signal():
@@ -154,62 +255,22 @@ def HomePage():
             trading_data[signal.indexName] = []
         trading_data[signal.indexName].append(signal)
 
-    if not User.is_active:
-        print('Your subscription has expired. Please renew.', 'warning')
-        return redirect(url_for('subscribe'))
+    # if not User.is_active:
+    #     print('Your subscription has expired. Please renew.', 'warning')
+    #     return redirect(url_for('subscribe'))
 
     return render_template('HomePage.html', trading_data=trading_data)
 
 
-
-
-@app.route('/signupreq', methods=['POST'])
-def signupReq():
-    data = request.form
-    SignUPData = Login.LoginPage.signup(data,User)
-    if SignUPData == "Email address already exists":
-        return SignUPData
-    else:
-        db.session.add(SignUPData)
-        db.session.commit()
-        login_user(SignUPData)
-        flash("Welcome To Cedar Club, Please Login With your account Details")
-        return redirect(url_for('home'))
-    
-def is_safe_url(target):
-    ref_url = urlparse(request.host_url)
-    test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
-
-
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.form
-    LoginData = Login.LoginPage.login(data,User)
-    if LoginData == "Wrong Username Or Password":
-        flash("Welcome To Cedar Club, Please Login With your account Details")
-        return LoginData
-    else:
-        db.session.add(LoginData)
-        db.session.commit()
-        login_user(LoginData,remember=True)
-        print(current_user.is_authenticated)
-        if current_user.is_active :
-            return redirect(url_for('HomePage'))
-        else:
-            flash("Your Subscription has expired Please renew to continue")
-            return redirect(url_for('subscribe'))
-
-
 @app.route('/api/check_session', methods=['GET'])
 def check_session():
-    if User.is_authenticated:
+    if current_user.is_authenticated:
         return jsonify({'status': 'authenticated'}), 200
     else:
         return jsonify({'status': 'unauthenticated'}), 401
 
 
-@app.route('/subscribe')
+@app.route('/subscribe', methods=['GET'])
 @login_required
 def subscribe():
     return render_template('subscribe.html')
@@ -284,7 +345,6 @@ def get_all_users():
         'id': user.id,
         'username': user.username,
         'email': user.email,
-        'is_active': user.is_active,
         'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None
     } for user in users]
     return jsonify(results), 200

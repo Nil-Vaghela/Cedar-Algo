@@ -1,32 +1,48 @@
 
 
+import requests
+
+
 class LoginPage():
 
 
-    def login(request,User):
+    def login(request):
+        loginUrl = "http://localhost:8000/api/login"
         email = request['email']
         password = request['password']
-        us = User
-        user = us.query.filter_by(email=email).first()
+        userdata = {
+            "email": email,
+            "password": password
+            }
         
-        if user and user.check_password(password):
-            return user
-        
-        else: 
-            return "Wrong Username Or Password"
+        signup_response = requests.post(loginUrl, json=userdata)
+        return signup_response
 
 
-    def signup(request,User):
-        username = request['first_name']
+    def signup(request):
+        signup_url = "http://localhost:8000/api/signup"
+
+        FirstName = request['first_name']
+        LastName = request["last_name"]
         email = request['email']
         password = request['password']
-        us = User
-        user = us.query.filter_by(email=email).first()
+        userdata = {
+            "first_name": FirstName,
+            "last_name": LastName,
+            "email": email,
+            "password": password
+            }
         
-        if user:
-            return "Email address already exists"
+        signup_response = requests.post(signup_url, json=userdata)
+        return signup_response
         
-        new_user = User(username=username, email=email)
-        new_user.set_password(password)
+        # us = User
+        # user = us.query.filter_by(email=email).first()
         
-        return new_user
+        # if user:
+        #     return "Email address already exists"
+        
+        # new_user = User(username=username, email=email)
+        # new_user.set_password(password)
+        
+        # return new_user
