@@ -975,6 +975,32 @@ img {
     cursor: pointer;
     transition: background 0.3s;
   }
+
+  .plan {
+    background-color: #1a1a1a; /* Dark background for contrast */
+    color: #fff; /* White text for readability */
+    padding: 20px;
+    border-radius: 10px; /* Soft rounded corners */
+}
+
+.plan input[type="text"],
+.plan input[type="email"],
+.plan input[type="tel"] {
+    width: 100%; /* Full width */
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #3399cc; /* Themed border color */
+    border-radius: 5px; /* Rounded borders for input fields */
+    background-color: #000;
+    color: #fff;
+}
+
+
+
+.plan .button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
   
   .button:hover {
     background-color: #1e8449; /* Darker green on hover */

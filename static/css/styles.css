@@ -282,6 +282,16 @@ img {
   align-items: center;
   column-gap: .75rem;
 }
+.original-price {
+  text-decoration: line-through;
+  color: #888; /* Gray color to show less emphasis */
+  margin-right: 10px;
+}
+
+.discount-price {
+  color: #ffffff; /* A vibrant color to highlight the new price */
+  font-weight: bold;
+}
 
 .button span {
   padding: .5rem;

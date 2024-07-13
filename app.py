@@ -154,11 +154,31 @@ def signupreq():
     data = request.form
     signup = Login.LoginPage.signup(data)
     if signup.status_code == 201:
+        # Extract user ID from signup response
+        user_id = signup.json().get('user_id')
+        
+        # Fetch user from database
+        user = User.query.get(user_id)
+        if user:
+            login_user(user, remember=True)  # Log in the user
+            session['user_id'] = user_id  # Optionally store the user ID in the session
 
-        flash("Welcome to Cedar Club, Please login Again to access your Account")
-        return redirect(url_for('home'))
+            # Check if the user has a subscription date and its status
+            if user.subscription_end_date:
+                if user.subscription_end_date > datetime.now():
+                    flash("Welcome to Cedar Club, your account has been created.")
+                    return redirect(url_for('HomePage'))  # Redirect to homepage if subscription is valid
+                else:
+                    return redirect(url_for('subscribe'))  # Redirect to subscription page if it has expired
+            else:
+                # If there's no subscription_end_date, consider how you want to handle this
+                return redirect(url_for('subscribe'))  # Assuming new users need to subscribe
+        else:
+            flash("User registration successful, but an error occurred. Please try logging in.")
+            return redirect(url_for('home'))
     else:
-        flash("Please Try Again")
+        # If signup was not successful, show an error message and redirect
+        flash("Signup failed. Please try again.")
         return redirect(url_for('home'))
 
 @app.route('/loginreq', methods=['POST'])

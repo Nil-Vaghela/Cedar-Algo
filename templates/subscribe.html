@@ -22,8 +22,8 @@
             <h1 class="section__title">Choose Your Subscription Plan</h1>
             
             <div class="container grid">
-                <!-- Basic Plan -->
-                <div class="plan">
+                
+                <!-- <div class="plan">
                     <h2 class="plan__title">Basic</h2>
                     <p class="plan__price">₹2,999 <span>/ month</span></p>
                     <ul class="plan__features">
@@ -32,9 +32,9 @@
                         <li>AI - ALGO TRADING</li>
                     </ul>
                     <button class="button">Coming Soon</button>
-                </div>
+                </div> -->
                 <!-- Advanced Plan -->
-                <div class="plan">
+                <!-- <div class="plan">
                     <h2 class="plan__title">Advanced</h2>
                     <p class="plan__price">₹7,999 <span>/ 6 months</span></p>
                     <ul class="plan__features">
@@ -43,9 +43,9 @@
                         <li>AI - ALGO TRADING</li>
                     </ul>
                     <button class="button">Coming Soon</button>
-                </div>
+                </div> -->
                 <!-- Pro Plan -->
-                <div class="plan">
+                <!-- <div class="plan">
                     <h2 class="plan__title">Pro</h2>
                     <p class="plan__price">₹14,999 <span>/ year</span></p>
                     <ul class="plan__features">
@@ -54,19 +54,26 @@
                         <li>AI - ALGO TRADING</li>
                     </ul>
                     <button class="button">Coming Soon</button>
-                </div>
+                </div> -->
                 
                 <div class="plan">
-                    <h2 class="plan__title">BETA ACCESS</h2>
-                    <p class="plan__price">₹999 <span>/ Month</span></p>
-                    <ul class="plan__features">
-                        <li>All-inclusive trading signals</li>
-                        <li>24/7 support</li>
-                    </ul>
-                    <input type="hidden" name="plan_id" value="beta_access">
-                    <input type="hidden" name="amount" value="99900"> 
-                    <button class="button" type="button" onclick="checkSessionAndPay()">Pay Now</button>
-                </div>
+                  <h2 class="plan__title">BETA ACCESS</h2>
+                  <p class="plan__price">₹999 <span>/ Month</span></p>
+                  <ul class="plan__features">
+                      <li>All-inclusive trading signals</li>
+                      <li>24/7 support</li>
+                  </ul>
+                  <!-- Hidden form for user details, to be shown on button click -->
+                  <div id="userDetailsForm" style="display: none;">
+                      <input type="text" id="userName" placeholder="Your Name" required>
+                      <input type="email" id="userEmail" placeholder="Your Email" required>
+                      <input type="tel" id="userContact" placeholder="Contact Number" required>
+                      <button class="button" onclick="checkSessionAndPay()">Submit</button>
+                  </div>
+                  <button class="button" id="payNowButton" onclick="showForm()">Pay Now</button>
+                  <input type="hidden" name="plan_id" value="beta_access">
+                  <input type="hidden" name="amount" value="99900">
+              </div>
             
             </div>
         
@@ -153,6 +160,11 @@
 
       <script>
 
+function showForm() {
+    document.getElementById('userDetailsForm').style.display = 'block'; // Show the form for user details
+    document.getElementById('payNowButton').style.display = 'none'; // Hide the Pay Now button
+}
+
 
 function checkSessionAndPay() {
     fetch('/api/check_session')
@@ -174,7 +186,7 @@ function checkSessionAndPay() {
             .then((response) => response.json())
             .then((order) => {
                 var options = {
-                    "key": "{{ rzp_test_PpfEtizXdw3rfT }}", // Enter the Key ID generated from the Dashboard
+                    "key": "{{ rzp_live_8kQ21NWsMXOu2S }}", // Enter the Key ID generated from the Dashboard
                     "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                     "currency": order.currency,
                     "name": "Cedar Algo Trading",
@@ -186,10 +198,10 @@ function checkSessionAndPay() {
                         window.location.href = '/success';
                     },
                     "prefill": {
-                        "name": "Cedar Algo Trading",
-                        "email": "Support@Cedar.in",
-                        "contact": "9999999999"
-                    },
+                "name": userName,
+                "email": userEmail,
+                "contact": userContact
+            },
                     "notes": {
                         "address": "Razorpay Corporate Office"
                     },
