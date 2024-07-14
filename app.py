@@ -1,6 +1,11 @@
+import logging
 import os
 from datetime import datetime, timedelta
+import socket
+import threading
+import time
 from urllib.parse import urljoin, urlparse
+import uuid
 from flask import Flask, jsonify, render_template, request, redirect, session, url_for, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -8,7 +13,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 import razorpay
-from Angleone import BrokerLogin
+from Angleone import BrokerLogin, BuyStock
 from loginSignup import Login
 
 app = Flask(__name__)
@@ -475,13 +480,23 @@ def refund():
 
 
 
+def get_ip_info():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    local_ip, public_ip = '127.0.0.1', requests.get('https://api.ipify.org').text
+    try:
+        s.connect(('10.254.254.254', 1))
+        local_ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return local_ip, public_ip, ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 2*6, 2)][::-1])
+
 
 
 @app.route('/AlgoSetup', methods=['GET', 'POST'])
 def AlgoSetup():
 
     user_id = current_user.get_id()
-    url = f"http://localhost:8000/api/user/{user_id}"
+    url = f"http://www.cedaralgo.in/api/user/{user_id}"
 
     response = requests.get(url)
     CredentialUser = response.json()
@@ -509,6 +524,10 @@ def AlgoSetup():
             user.refresh_token = refresh_token
             user.feed_token = feed_token
             db.session.commit()
+            local_ip, public_ip, mac_address = get_ip_info()
+            
+            thread = threading.Thread(target=monitor_signals, args=(api_key, auth_token, local_ip, public_ip, mac_address, 3))
+            thread.start()
             flash('Settings Updated Successfully!', 'success')
         else:
             flash('Failed to update settings due to API error', 'error')
@@ -531,6 +550,54 @@ def get_tokens(user_id):
         return user.auth_token, user.refresh_token, user.feed_token
     return None, None, None
 
-if __name__ == '__main__':
 
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def fetch_signals(api_url):
+    """ Fetch signals from the API and handle errors. """
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        logging.error(f"Error fetching signals: {e}")
+        return []
+
+def monitor_signals(api_key, auth_token, client_local_ip, client_public_ip, mac_address,interval=3,):
+    """ Monitor the API for new trading signals and handle duplicates. """
+    seen_ids = set()  # Stores the IDs of already seen signals to avoid duplication
+    while True:
+        signals = fetch_signals('https://www.cedaralgo.in/api/trading_signals')
+        
+        if signals:
+            # Filter out signals that have already been seen
+            new_signals = [signal for signal in signals if signal['id'] not in seen_ids]
+            if new_signals:
+                seen_ids.update(signal['id'] for signal in new_signals)
+                logging.info(f"New signals received: {new_signals}")
+                if len(new_signals) == 1:
+                    tradingsymbol = new_signals[0]["name"]
+                    quantity = 25
+                    tradingtoken = new_signals[0]["IndexToken"]
+                    stop_loss = new_signals[0]["sl"]
+                    target = new_signals[0]["target"]
+                    tralingstoploss = new_signals[0]["sl"]
+
+                    BuyStock.BuyStockParams.place_banknifty_order(
+                        api_key, auth_token, client_local_ip, client_public_ip, mac_address, tradingsymbol, quantity, tradingtoken, stop_loss, tralingstoploss,target=target
+                    )
+                    
+                    #BuyStock.BuyStockParams.place_banknifty_order
+            else:
+                logging.info("Checked API, but no new unique signals were found.")
+        else:
+            logging.info("No signals received from API in this check.")
+        time.sleep(interval)
+
+
+
+        
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
