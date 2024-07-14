@@ -11,13 +11,11 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
 
       <!--=============== CSS ===============-->
-      <link rel="stylesheet" href="static/css/Algo.css">
+      <link rel="stylesheet" href="/static/css/Algo.css">
 
       <title>Cedar AlgoTrading | Best Algo Trading Software | Best Algo Trading Platform | AI Trading BOT</title>
    </head>
    <body>
-
-
     
 
       <!--==================== HEADER ====================-->
@@ -27,18 +25,19 @@
                 <i class="ri-bar-chart-line"></i> Cedar Algo Trading
             </a>
             <div class="nav__menu" id="nav-menu">
-              <ul class="nav__list">
-                <li class="nav__item">
-                    <a href="/HomePage" class="nav__link ">Home</a>
-                </li>
-                <li class="nav__item">
-                    <a href="/profile" class="nav__link">Profile & Wallet</a>
-                </li>
-                <li class="nav__item">
-                    <a href="/AlgoSetup" class="nav__link active-link">Algo Setup</a>
-                </li>
-                
-            </ul>
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/HomePage" class="nav__link">Home</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/profile" class="nav__link active-link">Profile & wallet</a>
+                    </li>
+                   
+                    <li class="nav__item">
+                        <a href="/AlgoSetup" class="nav__link">Algo Setup</a>
+                    </li>
+                    
+                </ul>
                 <!-- Close button -->
                 <div class="nav__close" id="nav-close">
                     <i class="ri-close-line"></i>
@@ -53,69 +52,71 @@
         </nav>
     </header>
 
+
       <!--==================== MAIN ====================-->
       <main class="main">
          <!--==================== CONTACT ====================-->
          <section class="contact section" id="contact">
             <h2 class="section__title">
-                Right now we Support Only Angle One <br> 
+                Share and Earn Money <br> Up to ₹999 Per User
             </h2>
-            
-            <div class="login__container">
-              <div class="login__content {{ 'login__content_inactive' if credentials['Api_Username'] is none or credentials['api_key'] is none or credentials['pin'] is none or credentials['totp'] is none else 'login__content' }}">
-                    <!-- API Settings Form -->
-                    <form action="{{ url_for('AlgoSetup') }}" method="post" class="login__form" id="api-settings-form">
-                        <h3 class="login__title">
-                          {% if None in [credentials.get('Api_Username'), credentials.get('api_key'), credentials.get('pin'), credentials.get('totp'), credentials.get('auth_token'), credentials.get('refresh_token'), credentials.get('feed_token')] %}
-                          Please enter and verify your trading account
-                      {% else %}
-                          Your Account Has been verified
-                      {% endif %}
-                        
-                        </h3>
-                        
-                        <p class="new__description">Username</p>
-                        <div class="login__field">
-                            <i class="ri-key-line"></i>
-                            <input type="text" placeholder="Enter your Username" name="Api_Username" class="login__input" required value="{{ credentials['Api_Username'] }}">
-                        </div>
-                        
-                        <p class="new__description">API Secret Key</p>
-                        <div class="login__field">
-                            <i class="ri-shield-key-line"></i>
-                            <input type="password" id="apiSecret" placeholder="API Secret Key" name="api_key" class="login__input" required value="{{ credentials['api_key'] }}">
-                            <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('apiSecret', 'icon1')"></i>
-                        </div>
-        
-                        <p class="new__description">PIN</p>
-                        <div class="login__field">
-                            <i class="ri-shield-key-line"></i>
-                            <input type="password" id="pin" placeholder="PIN" name="pin" class="login__input" required value="{{ credentials['pin'] }}">
-                            <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('pin', 'icon2')"></i>
-                        </div>
-        
-                        <p class="new__description">TOTP Key</p>
-                        <div class="login__field">
-                            <i class="ri-shield-key-line"></i>
-                            <input type="password" id="totp" placeholder="TOTP Key" name="totp" class="login__input" required value="{{ credentials['totp'] }}">
-                            <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('totp', 'icon3')"></i>
-                        </div>
-        
-                        <div class="login__actions">
-                            <button type="submit" class="login__button">Update API Credentials</button>
-                        </div>
-                        <a href="/Steps" class="login__link">Click Here to get Detailed Steps for API KEY</a>
-                    </form>
+           
+            <div class="container grid profile-layout">
+                <!-- Left container -->
+                <div class="profile">
+                   
+                    <div class="profile__info card">
+                        <p><strong>Your Profile</strong></p>
+                        <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                        <p><strong>Refer Code:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Credit:</strong> {{ user.credit }}</p>
+                        <p><strong>Subscription End Date:</strong> {{ user.subscription_end_date.strftime('%d-%m-%y') if user.subscription_end_date else 'No active subscription' }}</p>
+                    </div>
                 </div>
+        
+                <!-- Right container -->
+                <div class="profile">
+                    <div class="profile__info card">
+                        <h4 class="card-title">Referral Bonus</h4>
+                        <p>Earn credits by referring friends! Here's how much you can earn:</p>
+                        <ul>
+                            <li><strong>1 Month Plan:</strong> ₹399 per referral</li>
+                            <li><strong>6 Month Plan:</strong> ₹499 per referral</li>
+                            <li><strong>12 Month Plan:</strong> ₹999 per referral</li>
+                        </ul>
+                        <p>Simply share your referral ID, and when your friends sign up and purchase a plan using your ID, you receive credits directly to your account.</p>
+                        <p><strong>Your Referral ID:</strong> {{ user.username }}</p>
+                    </div>
+                </div>
+
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+        
+                <!-- Centered below -->
+                <div class="profile center">
+                    <div class="profile__info card">
+                        <p><strong>Withdrawable Credit:</strong> {{ user.credit }}</p>
+                        <!-- Form to send POST request -->
+                        <form action="/api/submit_credit" method="POST" id="creditForm">
+                            <label for="upiId" class="form-label">Enter UPI ID:</label>
+                            <input type="text" id="upiId" name="upiId" placeholder="e.g., yourname@upi" class="input" required>
+                            <input type="hidden" name="credit" value="{{ user.credit }}">
+                            <button type="submit" class="button3" onclick="return checkUPI()">Withdraw Credits</button>
+                        </form>
+                    </div>
+                </div>
+                
             </div>
         </section>
-        <h2 class="section__title">
-          <strong>Why we need this Key and Password?</strong> 
-      </h2>
-      
-        <p class="login__title">
-          So that we can connect with Angle One and Place an order from here. <br> This bot will automaticaly buy and sell so that you will always stays in profit.
-        </p>
 
       <!--==================== FOOTER ====================-->
       <footer class="footer">
@@ -188,22 +189,6 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-
-<script>
-    function togglePasswordVisibility(fieldId, iconId) {
-        var passwordInput = document.getElementById(fieldId);
-        var passwordIcon = document.querySelector('.' + iconId);
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            passwordIcon.classList.remove('ri-eye-line');
-            passwordIcon.classList.add('ri-eye-off-line');
-        } else {
-            passwordInput.type = 'password';
-            passwordIcon.classList.remove('ri-eye-off-line');
-            passwordIcon.classList.add('ri-eye-line');
-        }
-    }
-    </script>
     
       
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

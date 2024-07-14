@@ -26,11 +26,14 @@ class LoginPage():
         LastName = request["last_name"]
         email = request['email']
         password = request['password']
+        referred_by = request.get('referrer') 
+        
         userdata = {
             "first_name": FirstName,
             "last_name": LastName,
             "email": email,
-            "password": password
+            "password": password,
+            "referrer": referred_by
             }
         
         signup_response = requests.post(signup_url, json=userdata)

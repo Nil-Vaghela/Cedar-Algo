@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime, timedelta
+import re
 import socket
 import threading
 import time
@@ -10,6 +11,7 @@ from flask import Flask, jsonify, render_template, request, redirect, session, u
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 import razorpay
@@ -34,7 +36,8 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-client = razorpay.Client(auth=("rzp_live_8kQ21NWsMXOu2S", "Q6rWc0EoKLmODmLKzAvKvz2S"))
+# client = razorpay.Client(auth=("rzp_live_8kQ21NWsMXOu2S", "Q6rWc0EoKLmODmLKzAvKvz2S")) # live
+client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF")) #test
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -52,6 +55,8 @@ class User(db.Model, UserMixin):
     auth_token = db.Column(db.String(2048))  # Stores the authorization token
     refresh_token = db.Column(db.String(2048))  # Stores the refresh token
     feed_token = db.Column(db.String(2048))
+    credit = db.Column(db.Integer, default=0)
+    referred_by = db.Column(db.String(80), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -76,6 +81,9 @@ class User(db.Model, UserMixin):
     def get_id(self):
         """Return the email address to satisfy Flask-Login's requirements."""
         return str(self.id)
+    
+    def get_referred_by(self):
+        return self.referred_by
 
 class TradingSignal(db.Model):
     __tablename__ = 'trading_signal'
@@ -101,6 +109,7 @@ def signup():
     last_name = data.get('last_name')
     email = data.get('email')
     password = data.get('password')
+    referrer = data.get('referrer', None)
 
     if not first_name or not last_name or not email or not password:
         return jsonify({'error': 'Missing fields'}), 400
@@ -117,7 +126,9 @@ def signup():
         first_name=first_name,
         last_name=last_name,
         username=username,
-        email=email
+        email=email,
+        referred_by=referrer,
+        subscription_end_date=datetime.now() + timedelta(days=1)
     )
     new_user.set_password(password)
 
@@ -167,17 +178,13 @@ def signupreq():
         if user:
             login_user(user, remember=True)  # Log in the user
             session['user_id'] = user_id  # Optionally store the user ID in the session
+            user.referred_by = data.get('referrer',)
+            # Set the subscription end date to two days from now
+            user.subscription_end_date = datetime.now() + timedelta(days=2)
+            db.session.commit()  # Commit the update to the database
 
-            # Check if the user has a subscription date and its status
-            if user.subscription_end_date:
-                if user.subscription_end_date > datetime.now():
-                    flash("Welcome to Cedar Club, your account has been created.")
-                    return redirect(url_for('HomePage'))  # Redirect to homepage if subscription is valid
-                else:
-                    return redirect(url_for('subscribe'))  # Redirect to subscription page if it has expired
-            else:
-                # If there's no subscription_end_date, consider how you want to handle this
-                return redirect(url_for('subscribe'))  # Assuming new users need to subscribe
+            flash("Welcome to Cedar Club, your account has been created with a 2-day free trial.")
+            return redirect(url_for('HomePage'))  # Redirect to homepage
         else:
             flash("User registration successful, but an error occurred. Please try logging in.")
             return redirect(url_for('home'))
@@ -262,6 +269,62 @@ def get_trading_signals():
     return jsonify(results), 200
 
 
+@app.route('/api/user/<int:user_id>/add_credit', methods=['POST'])
+def add_credit(user_id):
+    # Retrieve the user from the database
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    # Get the credit amount from the request data
+    data = request.get_json()
+    credit_to_add = data.get('credit')
+    
+    if credit_to_add is None:
+        return jsonify({'error': 'No credit amount provided'}), 400
+
+    try:
+        # Convert credit to integer and add it to the user's current credit
+        credit_to_add = int(credit_to_add)
+        if user.credit is None:
+            user.credit = 0
+        user.credit += credit_to_add
+        db.session.commit()
+        return jsonify({'message': 'Credit added successfully', 'total_credit': user.credit}), 200
+    except ValueError:
+        return jsonify({'error': 'Invalid credit amount'}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to add credit', 'message': str(e)}), 500
+    
+
+def add_credit_to_user(user_id, credit_amount):
+    """
+    Function to add credit to a user's account via the API.
+
+    Args:
+    - user_id (int): The ID of the user to whom credit will be added.
+    - credit_amount (int): The amount of credit to add.
+    - api_url (str): The base URL of the API.
+
+    Returns:
+    - response (dict): The JSON response from the API which includes status message or error.
+    """
+    # Construct the full API endpoint URL
+    endpoint = f"http://127.0.0.1:8000/api/user/{user_id}/add_credit"
+    
+    # Prepare the data payload as a JSON
+    payload = {'credit': credit_amount}
+
+    try:
+        # Send a POST request to the API
+        response = requests.post(endpoint, json=payload)
+        # Return the JSON response
+        return response.json()
+    except requests.RequestException as e:
+        # Handle any errors that occur during the request
+        return {'error': 'Request failed', 'message': str(e)}
+
 
 @app.route('/api/trading_signal/<int:id>/edit_status', methods=['PATCH'])
 def edit_trading_signal_status(id):
@@ -298,8 +361,12 @@ def HomePage():
     # if not User.is_active:
     #     print('Your subscription has expired. Please renew.', 'warning')
     #     return redirect(url_for('subscribe'))
+    days_left = None
+    if current_user.subscription_end_date:
+        days_left = (current_user.subscription_end_date - datetime.now()).days
 
-    return render_template('HomePage.html', trading_data=trading_data)
+
+    return render_template('HomePage.html', trading_data=trading_data,days_left=days_left)
 
 
 @app.route('/api/check_session', methods=['GET'])
@@ -316,11 +383,17 @@ def subscribe():
     return render_template('subscribe.html')
 
 
+CreditAmount = 0
+
 @app.route('/pay', methods=['POST'])
 def pay():
-    # Payment data
+    data = request.get_json()  # Get data from JSON payload
+    amount = data.get('amount')  # Access the amount sent from the client
+    global CreditAmount
+    CreditAmount = 0
+    CreditAmount = amount
     payment_data = {
-        "amount": 99900,  # Amount in smallest currency unit e.g. paise for INR
+        "amount": amount,  # Use the amount from the client
         "currency": "INR",
         "receipt": "order_rcptid_11",
         "notes": {
@@ -338,8 +411,34 @@ def pay():
 
 @app.route('/success')
 def payment_success():
+
+    subEndDate = datetime.now() + timedelta(days=30)
+    ref = current_user.get_referred_by()
+
     try:
-        current_user.subscription_end_date = datetime.now() + timedelta(days=30)
+        if current_user.get_referred_by() == "":
+            if CreditAmount == 299900:
+                subEndDate = datetime.now() + timedelta(days=30)
+                
+            elif CreditAmount == 1299900:
+                subEndDate = datetime.now() + timedelta(days=180)
+            elif CreditAmount == 1999900:
+                subEndDate = datetime.now() + timedelta(days=365)
+        else :
+            referrer = current_user.get_referred_by()
+            digits = re.findall(r'\d+', referrer)
+            referrer_id = int(''.join(digits))
+            if CreditAmount == 299900:
+                subEndDate = datetime.now() + timedelta(days=30)
+                add_credit_to_user(referrer_id,399)
+            elif CreditAmount == 1299900:
+                subEndDate = datetime.now() + timedelta(days=180)
+                add_credit_to_user(referrer_id,699)
+            elif CreditAmount == 1999900:
+                subEndDate = datetime.now() + timedelta(days=365)
+                add_credit_to_user(referrer_id,999)
+
+        current_user.subscription_end_date = subEndDate
         db.session.commit()  # Make sure to commit changes
         flash('Payment successful! Subscription is updated.', 'success')
         return redirect(url_for('HomePage'))
@@ -392,10 +491,18 @@ def get_all_users():
         'Api_Username': user.Api_Username,  # Never expose API secrets
         'pin': user.pin,  # Assuming the PIN should also be secured
         'totp_secret': user.totp_secret,  # Never expose TOTP secrets
-        'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None
+        'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None,
+        'credit': user.credit,  # Exposing the credit amount
+        'referred_by': user.referred_by
+        
     } for user in users]
     return jsonify(results), 200
 
+@app.route('/profile')
+def profile():
+    user_id = current_user.get_id()
+    user = User.query.get_or_404(user_id)
+    return render_template('profilePage.html', user=user)
 
 @app.route('/api/user/<int:user_id>', methods=['GET'])
 def get_user_by_id(user_id):
@@ -416,7 +523,9 @@ def get_user_by_id(user_id):
         'feed_token': user.feed_token,  # Caution: Sensitive data
         'pin': user.pin,  # Assuming the PIN should also be secured
         'totp': user.totp_secret,  # Never expose TOTP secrets
-        'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None
+        'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None,
+        'credit': user.credit,  # Exposing the credit amount
+        'referred_by': user.referred_by
     }
 
     return jsonify(user_data), 200
@@ -478,6 +587,10 @@ def terms():
 def refund():
     return render_template('refund.html')
 
+@app.route('/Steps')
+def Steps():
+    return render_template('StepsToAddAngleOne.html')
+
 
 
 def get_ip_info():
@@ -491,6 +604,22 @@ def get_ip_info():
     return local_ip, public_ip, ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 2*6, 2)][::-1])
 
 
+@app.route('/api/submit_credit', methods=['POST'])
+def submit_credit():
+    user_id = current_user.get_id()
+    user = User.query.get_or_404(user_id)
+    if user.credit is None:
+        user.credit = 0
+    if user.credit > 0:
+        # Assume a function to process the withdrawal here
+
+        user.credit = 0  # Reset credits after withdrawal
+        db.session.commit()
+        flash('Your withdrawal request has been processed successfully!', 'success')
+    else:
+        flash('Insufficient credits for withdrawal.', 'error')
+
+    return redirect(url_for('profile'))
 
 @app.route('/AlgoSetup', methods=['GET', 'POST'])
 def AlgoSetup():

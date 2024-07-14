@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="static/img/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+    <link rel="stylesheet" href="static/css/Algo.css">
+    <title>Cedar AlgoTrading API Setup Guide</title>
+</head>
+<body>
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="#" class="nav__logo">
+                <i class="ri-bar-chart-line"></i> Cedar Algo Trading
+            </a>
+            <!-- Navigation Links -->
+            <div class="nav__menu" id="nav-menu">
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="/HomePage" class="nav__link">Home</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="/profile" class="nav__link active-link">API Setup Guide</a>
+                    </li>
+                </ul>
+                <div class="nav__close" id="nav-close">
+                    <i class="ri-close-line"></i>
+                </div>
+            </div>
+            <div class="nav__toggle" id="nav-toggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="section contact">
+            <h2 class="section__title">API Key Setup Guide</h2>
+            <div class="container grid">
+                <!-- Step 1: Username -->
+                <div class="api-instructions">
+                    <h3 class="api-setup__title">1. Username (Client ID)</h3>
+                    <p class="api-setup__description">Your username is your client ID. Go to your profile to find your Client ID.</p>
+                    <img src="static/img/clientid.jpg" alt="Client ID Screenshot" class="api-setup__img"style="width:100%; max-width:200px; height:auto;">
+                </div>
+
+                <!-- Step 2: PIN -->
+                <div class="api-instructions">
+                    <h3 class="api-setup__title">2. PIN</h3>
+                    <p class="api-setup__description">Your 4-digit PIN which you use to log into your Angle One account.</p>
+                    <img src="static/img/pin.jpg" alt="PIN Screenshot" class="api-setup__img" style="width:100%; max-width:200px; height:auto;">
+                </div>
+
+                <!-- Step 3: API Key -->
+                <div class="api-instructions">
+                    <h3 class="api-setup__title">3. API Key</h3>
+                    <p class="api-setup__description">
+                        Visit <a href="https://smartapi.angelbroking.com" target="_blank">https://smartapi.angelbroking.com</a>,
+                        log in with your Angle One account, create an app, select "Trading API", name your app "Cedar",
+                        and set the redirect URL to <a href="https://www.cedaralgo.in">https://www.cedaralgo.in</a>.
+                        Click create app and copy the API key provided.
+                    </p>
+                    <img src="static/img/creatapp.png" alt="API Key Screenshot" class="api-setup__img" style="width:100%; max-width:200px; height:auto;">
+                    <p class="api-setup__description">
+                        After Creating app you will see something like this
+                    </p>
+                    <div>
+                        <img src="static/img/apikey.png" alt="API Key Screenshot" class="api-setup__img" style="width:100%; max-width:200px; height:auto;">
+                    </div>
+                </div>
+
+                <!-- Step 4: TOTP -->
+                <div class="api-instructions">
+                    <h3 class="api-setup__title">4. TOTP</h3>
+                    <p class="api-setup__description">
+                        Click enable TOTP from the top, sign in with your Angle One account and copy the key as shown in the screenshot.
+                    </p>
+                    <img src="static/img/totp.png" alt="TOTP Screenshot" class="api-setup__img" style="width:100%; max-width:400px; height:auto;">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__container container grid">
+            <div>
+                <a href="#" class="footer__logo">
+                    <i class="ri-bar-chart-line"></i> Cedar AlgoTrading
+                </a>
+                <p>This platform is for educational purposes only. Trading involves significant risk and may not be suitable for all investors. Please consult with a financial advisor before making any investment decisions.</p>
+            </div>
+        </div>
+        <span class="footer__copy">&#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.3</span>
+    </footer>
+    <script src="static/js/main.js"></script>
+</body>
+</html>

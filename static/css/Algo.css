@@ -940,3 +940,131 @@ img {
 .hidden {
   display: none !important;
 }
+
+.profile-layout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.profile {
+  flex: 1 1 48%; /* Make each profile take up almost half the width */
+}
+
+.center {
+  flex-basis: 100%; /* Takes full width to center below */
+  display: flex;
+  justify-content: center; /* Center the content */
+}
+
+.profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.profile__header {
+    margin-bottom: 2rem;
+}
+
+.profile__info {
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--container-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    color: var(--text-color);
+}
+
+.profile__info p {
+    margin-bottom: 1rem;
+    font-size: var(--normal-font-size);
+    color: var(--title-color);
+}
+
+.profile__info strong {
+    color: var(--first-color);
+}
+
+.button3 {
+  background-color: var(--first-color); /* Green background from your variables */
+  color: var(--white-color); /* White text color for contrast */
+  padding: 12px 24px; /* Padding for a better visual appearance */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  font-size: var(--normal-font-size); /* Standard font size */
+  font-weight: var(--font-bold); /* Bold text */
+  cursor: pointer; /* Cursor indicates clickable */
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
+  text-transform: uppercase; /* Uppercase text for a more impactful look */
+  letter-spacing: 1px; /* Spacing between letters */
+  display: inline-block; /* Ensures it doesn't stretch to full width */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.button3:hover, .button3:focus {
+  background-color: var(--first-color-alt); /* Slightly darker green on hover/focus */
+  transform: translateY(-2px); /* Slightly lift the button on hover/focus */
+  outline: none; /* Remove focus outline */
+}
+
+.button3:active {
+  transform: translateY(1px); /* Push down the button when clicked */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Deeper shadow to simulate pressing */
+}
+
+
+.input {
+  width: 100%;
+  padding: 10px 15px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid var(--first-color-light);
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: var(--normal-font-size);
+  color: var(--white-color);
+  background-color: var(--container-color);
+}
+
+.button3 {
+  background-color: var(--first-color);
+  color: var(--white-color);
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button3:hover {
+  background-color: var(--first-color-alt);
+}
+
+.form-label {
+  font-size: var(--normal-font-size);
+  color: var(--title-color);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.api-instructions {
+  color: var(--white-color);  /* Assuming your theme variable for readable text on dark backgrounds */
+  font-size: var(--normal-font-size);  /* Adjust as needed */
+  font-weight: var(--font-bold);  /* Make the font bolder */
+  background-color: var(--body-color);  /* A subtle background if needed */
+  padding: 10px;  /* Adds some space around the text */
+  border-radius: 8px;  /* Optional: Rounds the corners of the background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Optional: Adds a subtle shadow for depth */
+  margin-bottom: 20px;  /* Space below the paragraph */
+}
+
+.api-instructions a {
+  color: var(--first-color);  /* Ensures links are visible and attractive */
+  text-decoration: underline;  /* Makes it clear that it's a clickable link */
+}
+
+.api-instructions a:hover {
+  color: var(--first-color-light);  /* Changes color on hover for interactivity */
+}

@@ -292,6 +292,26 @@ img {
   color: #ffffff; /* A vibrant color to highlight the new price */
   font-weight: bold;
 }
+.button2 {
+  background-color: #27ae60;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.container2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Adds space between each plan */
+  flex-wrap: wrap; /* Allows plans to wrap on smaller screens */
+  padding: 20px;
+  max-width: 1200px; /* Or any other max width or full width as per design requirements */
+  margin: auto; /* Centers the container */
+}
 
 .button span {
   padding: .5rem;
@@ -315,6 +335,46 @@ img {
 
 .button__link:hover {
   color: var(--first-color);
+}
+
+.plan {
+  background: rgba(39, 174, 96, 0.1); /* Light green background for better visibility */
+  border: 1px solid #27ae60; /* Green border for plan boxes */
+  padding: 20px;
+  border-radius: 10px;
+  width: 30%; /* Adjust based on container width and number of plans */
+  min-width: 300px; /* Minimum width for each plan to maintain readability */
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.plan:hover {
+  transform: scale(1.05); /* Slightly enlarges the plan on hover */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for a lifting effect */
+}
+
+.plan__title {
+  font-size: 1.5rem;
+  color: #27ae60; /* Keeping the green theme consistent */
+  margin-bottom: 10px;
+}
+
+.plan__price {
+  font-size: 1.4rem;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+.plan__features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.plan__features li {
+  margin-bottom: 10px;
+  color: #ffffff;
 }
 
 /*=============== NEWS ===============*/

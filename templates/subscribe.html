@@ -55,10 +55,9 @@
                     </ul>
                     <button class="button">Coming Soon</button>
                 </div> -->
-                
                 <div class="plan">
-                  <h2 class="plan__title">BETA ACCESS</h2>
-                  <p class="plan__price">₹999 <span>/ Month</span></p>
+                  <h2 class="plan__title">One Month ACCESS</h2>
+                  <p class="plan__price">₹2,999 <span>/ Month</span></p>
                   <ul class="plan__features">
                       <li>All-inclusive trading signals</li>
                       <li>24/7 support</li>
@@ -68,9 +67,46 @@
                       <input type="text" id="userName" placeholder="Your Name" required>
                       <input type="email" id="userEmail" placeholder="Your Email" required>
                       <input type="tel" id="userContact" placeholder="Contact Number" required>
-                      <button class="button" onclick="checkSessionAndPay()">Submit</button>
+                      <button class="button" onclick="checkSessionAndPay(299900)">Submit</button>
                   </div>
-                  <button class="button" id="payNowButton" onclick="showForm()">Pay Now</button>
+                  <button class="button" id="payNowButton" onclick="checkSessionAndPay(299900)">Pay Now</button>
+                  <input type="hidden" name="plan_id" value="beta_access">
+                  <input type="hidden" name="amount" value="99900">
+              </div>
+              <div class="plan">
+                <h2 class="plan__title">6 Month ACCESS</h2>
+                <p class="plan__price">₹12999 <span>/ Month</span></p>
+                <ul class="plan__features">
+                    <li>All-inclusive trading signals</li>
+                    <li>24/7 support</li>
+                </ul>
+                <!-- Hidden form for user details, to be shown on button click -->
+                <div id="userDetailsForm" style="display: none;">
+                    <input type="text" id="userName" placeholder="Your Name" required>
+                    <input type="email" id="userEmail" placeholder="Your Email" required>
+                    <input type="tel" id="userContact" placeholder="Contact Number" required>
+                    <button class="button" onclick="checkSessionAndPay(1299900)">Submit</button>
+                </div>
+                <button class="button" id="payNowButton" onclick="checkSessionAndPay(1299900)">Pay Now</button>
+                <input type="hidden" name="plan_id" value="beta_access">
+                <input type="hidden" name="amount" value="99900">
+            </div>
+                
+                <div class="plan">
+                  <h2 class="plan__title">12 Month ACCESS</h2>
+                  <p class="plan__price">₹19,999 <span>/ Month</span></p>
+                  <ul class="plan__features">
+                      <li>All-inclusive trading signals</li>
+                      <li>24/7 support</li>
+                  </ul>
+                  <!-- Hidden form for user details, to be shown on button click -->
+                  <div id="userDetailsForm" style="display: none;">
+                      <input type="text" id="userName" placeholder="Your Name" required>
+                      <input type="email" id="userEmail" placeholder="Your Email" required>
+                      <input type="tel" id="userContact" placeholder="Contact Number" required>
+                      <button class="button" onclick="checkSessionAndPay(199900)">Submit</button>
+                  </div>
+                  <button class="button" id="payNowButton" onclick="checkSessionAndPay(1999900)">Pay Now</button>
                   <input type="hidden" name="plan_id" value="beta_access">
                   <input type="hidden" name="amount" value="99900">
               </div>
@@ -166,11 +202,11 @@ function showForm() {
 }
 
 
-function checkSessionAndPay() {
+function checkSessionAndPay(amount) {
     fetch('/api/check_session')
     .then(response => {
         if (response.status === 200) {
-            makePayment();  // User is logged in, proceed with payment
+            makePayment(amount);  // User is logged in, proceed with payment
         } else {
             alert('Your session has expired. Please log in again.');
             window.location.href = '/login';  // Redirect to login
@@ -179,15 +215,19 @@ function checkSessionAndPay() {
     .catch(error => console.error('Failed to check session', error));
 }
 
-        function makePayment() {
-            fetch('/pay', {
-                method: 'POST',
-            })
+        function makePayment(amount) {
+          fetch('/pay', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount: amount })  // Send the amount to the server
+    })
             .then((response) => response.json())
             .then((order) => {
                 var options = {
                     "key": "{{ rzp_live_8kQ21NWsMXOu2S }}", // Enter the Key ID generated from the Dashboard
-                    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                    "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                     "currency": order.currency,
                     "name": "Cedar Algo Trading",
                     "description": "Beta Access For Month",

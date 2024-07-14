@@ -87,6 +87,12 @@ html {
   scroll-behavior: smooth;
 }
 
+.subscription-info {
+  color: #ffffff;  /* Red for urgency */
+  font-weight: bold;
+  align-items: center;
+}
+
 body {
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
