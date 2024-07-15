@@ -132,4 +132,4 @@ xgboost==2.1.0
 yarg==0.1.9
 gunicorn==19.7.1
 yfinance==0.2.40
-celery=5.4.0
+

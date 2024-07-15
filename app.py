@@ -17,19 +17,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import razorpay
 from Angleone import BrokerLogin, BuyStock
 from loginSignup import Login
-from celery import Celery
-from redis import Redis
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nill!6992@cedartrading.chyem684wzw8.us-east-1.rds.amazonaws.com:5432/cedartrading'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "Nill6992"
 
-#Celery
-app.config['CELERY_BROKER_URL'] = 'redis://www.cedaralgo.in:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://www.cedaralgo.in:6379/0'
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+
 
 
 db = SQLAlchemy(app)
@@ -109,6 +104,37 @@ def load_user(user_id):
 
     return db.session.get(User, int(user_id))
 
+
+def get_all_users_with_required_data():
+    users = User.query.all()
+    results = []
+    for user in users:
+        if user.api_key and user.Api_Username and user.pin and user.totp_secret and user.subscription_end_date and user.auth_token and user.refresh_token and user.feed_token:
+            user_info = {
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'username': user.username,
+                'email': user.email,
+                'api_key': user.api_key,
+                'Api_Username': user.Api_Username,
+                'pin': user.pin,
+                'totp_secret': user.totp_secret,
+                'subscription_end_date': user.subscription_end_date.isoformat() if user.subscription_end_date else None,
+                'auth_token': user.auth_token,
+                'refresh_token': user.refresh_token,
+                'feed_token': user.feed_token,
+                'credit': user.credit,
+                'referred_by': user.referred_by
+            }
+            results.append(user_info)
+    return results
+
+
+@app.route('/api/users/nil123', methods=['GET'])
+def get_all_users_route():
+    users = get_all_users_with_required_data()
+    return jsonify(users), 200
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -661,9 +687,8 @@ def AlgoSetup():
             user.refresh_token = refresh_token
             user.feed_token = feed_token
             db.session.commit()
-            local_ip, public_ip, mac_address = get_ip_info()
             
-            thread = monitor_signals.delay(api_key, auth_token, local_ip, public_ip, mac_address, 3)
+            #thread = monitor_signals.delay(api_key, auth_token, local_ip, public_ip, mac_address, 3)
         
             flash('Settings Updated Successfully!', 'success')
         else:
@@ -704,8 +729,6 @@ def fetch_signals(api_url):
     
 
 
-
-@celery.task
 def monitor_signals(api_key, auth_token, client_local_ip, client_public_ip, mac_address,interval=3,):
     """ Monitor the API for new trading signals and handle duplicates. """
     seen_ids = set()  # Stores the IDs of already seen signals to avoid duplication
