@@ -607,7 +607,7 @@ def contact():
 
 @app.route('/pricing')
 def pricing():
-    return render_template('subscribe.html')
+    return render_template('pricing.html')
 
 @app.route('/privacy')
 def privacy():

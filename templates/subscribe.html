@@ -8,14 +8,41 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
-    <header class="header">
-        <nav class="nav container">
-            <a href="#" class="nav__logo">
-                <i class="ri-cactus-line"></i> Cedar AlgoTrading
-             </a>
- 
-        </nav>
-    </header>
+  <header class="header" id="header">
+    <nav class="nav container">
+        <a href="#" class="nav__logo">
+            <i class="ri-bar-chart-line"></i> Cedar Algo Trading
+        </a>
+        <div class="nav__menu" id="nav-menu">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="/HomePage" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/profile" class="nav__link ">Profile & wallet</a>
+                </li>
+               
+                <li class="nav__item">
+                    <a href="/AlgoSetup" class="nav__link">Algo Setup</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/subscribe" class="nav__link active-link">Subscription</a>
+              </li>
+                
+            </ul>
+            <!-- Close button -->
+            <div class="nav__close" id="nav-close">
+                <i class="ri-close-line"></i>
+            </div>
+        </div>
+        <div class="nav__actions">
+            <!-- Toggle button -->
+            <div class="nav__toggle" id="nav-toggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+</header>
 
     <main class="main">
         <section class="subscription section" id="subscribe">
