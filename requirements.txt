@@ -1,2 +1,13 @@
+alembic==1.13.2
 Flask==3.0.3
-pandas==2.2.2
+Flask_Login==0.6.3
+Flask_Migrate==4.0.7
+flask_sqlalchemy==3.1.1
+pyotp==2.9.0
+razorpay==1.4.2
+Requests==2.32.3
+SmartApi==1.1.0
+smartapi_python==1.4.8
+SQLAlchemy==2.0.31
+Werkzeug==3.0.3
+celery==5.4.0
