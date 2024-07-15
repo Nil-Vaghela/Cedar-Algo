@@ -17,11 +17,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import razorpay
 from Angleone import BrokerLogin, BuyStock
 from loginSignup import Login
+from celery import Celery
+from redis import Redis
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nill!6992@cedartrading.chyem684wzw8.us-east-1.rds.amazonaws.com:5432/cedartrading'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "Nill6992"
+
+#Celery
+app.config['CELERY_BROKER_URL'] = 'redis://www.cedaralgo.in:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://www.cedaralgo.in:6379/0'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 
 db = SQLAlchemy(app)
@@ -655,8 +663,8 @@ def AlgoSetup():
             db.session.commit()
             local_ip, public_ip, mac_address = get_ip_info()
             
-            thread = threading.Thread(target=monitor_signals, args=(api_key, auth_token, local_ip, public_ip, mac_address, 3))
-            thread.start()
+            thread = monitor_signals.delay(api_key, auth_token, local_ip, public_ip, mac_address, 3)
+        
             flash('Settings Updated Successfully!', 'success')
         else:
             flash('Failed to update settings due to API error', 'error')
@@ -693,7 +701,11 @@ def fetch_signals(api_url):
     except requests.RequestException as e:
         logging.error(f"Error fetching signals: {e}")
         return []
+    
 
+
+
+@celery.task
 def monitor_signals(api_key, auth_token, client_local_ip, client_public_ip, mac_address,interval=3,):
     """ Monitor the API for new trading signals and handle duplicates. """
     seen_ids = set()  # Stores the IDs of already seen signals to avoid duplication
@@ -708,14 +720,23 @@ def monitor_signals(api_key, auth_token, client_local_ip, client_public_ip, mac_
                 logging.info(f"New signals received: {new_signals}")
                 if len(new_signals) == 1:
                     tradingsymbol = new_signals[0]["name"]
-                    quantity = 25
+                    index = new_signals[0]["indexName"]
+
+                    if index == "NIFTY":
+                        quantity = 25
+                    elif index == "FINNIFTY":
+                        quantity = 40
+                    elif index == "BANKNIFTY":
+                        quantity = 15
+                    
                     tradingtoken = new_signals[0]["IndexToken"]
                     stop_loss = new_signals[0]["sl"]
                     target = new_signals[0]["target"]
                     tralingstoploss = new_signals[0]["sl"]
+                    BuyPrice = new_signals[0]["buy"]
 
                     BuyStock.BuyStockParams.place_banknifty_order(
-                        api_key, auth_token, client_local_ip, client_public_ip, mac_address, tradingsymbol, quantity, tradingtoken, stop_loss, tralingstoploss,target=target
+                        api_key, auth_token, client_local_ip, client_public_ip, mac_address, tradingsymbol, quantity, tradingtoken, stop_loss, tralingstoploss,target=target,buy=BuyPrice
                     )
                     
                     #BuyStock.BuyStockParams.place_banknifty_order

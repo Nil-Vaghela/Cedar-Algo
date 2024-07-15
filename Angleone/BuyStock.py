@@ -4,7 +4,7 @@ import requests
 
 
 class BuyStockParams():
-    def place_banknifty_order(api_key, auth_token, client_local_ip, client_public_ip, mac_address, tradingsymbol, quantity, tradingtoken, stop_loss, trailing_stop_loss,target):
+    def place_banknifty_order(api_key, auth_token, client_local_ip, client_public_ip, mac_address, tradingsymbol, quantity, tradingtoken, stop_loss, trailing_stop_loss,target,buy):
         url = "https://apiconnect.angelbroking.com/rest/secure/angelbroking/order/v1/placeOrder"
         headers = {
             'Authorization': auth_token,
@@ -23,12 +23,13 @@ class BuyStockParams():
             "symboltoken": tradingtoken,  # Update with the actual symbol token for Banknifty
             "transactiontype": "BUY",
             "exchange": "NFO",
-            "ordertype": "MARKET",
+            "ordertype": "LIMIT",
+            "price":buy,
             "producttype": "INTRADAY",
             "duration": "DAY",
             "quantity": quantity,
-            "stoploss": stop_loss,
-            "squareoff": target,
+            "stoploss": str((float(buy) - int(stop_loss))),
+            "squareoff": str((int(target) - float(buy))),
             "trailingStopLoss": trailing_stop_loss,
             "triggerprice":str( int(stop_loss) + 1)
         }
