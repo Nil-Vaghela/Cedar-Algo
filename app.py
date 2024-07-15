@@ -26,8 +26,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "Nill6992"
 
 #Celery
-app.config['CELERY_BROKER_URL'] = 'redis://54.205.238.148:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://54.205.238.148:6379/0'
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
