@@ -379,7 +379,7 @@ def edit_trading_signal_status(id):
 
 @app.route('/')
 def home():
-    global unique_visitor_count  # Declare the use of the global variable
+    global unique_visitor_count,visited_ips  # Declare the use of the global variable
     ip = request.remote_addr
     if ip not in visited_ips:
         visited_ips.add(ip)
@@ -469,7 +469,7 @@ def payment_success():
         else :
             referrer = current_user.get_referred_by()
             digits = re.findall(r'\d+', referrer)
-            referrer_id = int(''.join(digits))
+            referrer_id = int(''.join(digits)) if digits else 37
             if CreditAmount == 299900:
                 subEndDate = datetime.now() + timedelta(days=30)
                 add_credit_to_user(referrer_id,399)
