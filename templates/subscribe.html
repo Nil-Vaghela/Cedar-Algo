@@ -6,6 +6,31 @@
     <title>Subscribe | Cedar AlgoTrading</title>
     <link rel="stylesheet" href="static/css/subscribe.css">
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+
+
+
+<script>
+   // Your web app's Firebase configuration
+   const firebaseConfig = {
+      apiKey: "AIzaSyAA1H1ZLHk0wk9TV3kl86H51hU2ar6wB-g",
+      authDomain: "cedaralgo.firebaseapp.com",
+      projectId: "cedaralgo",
+      storageBucket: "cedaralgo.appspot.com",
+      messagingSenderId: "954545040500",
+      appId: "1:954545040500:web:55bd7b47e047a4e7a97521",
+      measurementId: "G-744FYMPKP1"
+   };
+ 
+   // Initialize Firebase
+   firebase.initializeApp(firebaseConfig);
+ 
+   // Enable analytics
+   firebase.analytics();
+   firebase.analytics().logEvent('Subscription');
+   
+ </script>
     <!-- Meta Pixel Code -->
 <script>
   !function(f,b,e,v,n,t,s)
@@ -240,6 +265,8 @@
 
       <script>
 
+        
+
 function showForm() {
     document.getElementById('userDetailsForm').style.display = 'block'; // Show the form for user details
     document.getElementById('payNowButton').style.display = 'none'; // Hide the Pay Now button
@@ -300,6 +327,7 @@ function checkSessionAndPay(amount) {
                 console.log(error);
             });
         }
+        
     </script>
 
       

@@ -384,6 +384,33 @@
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Include Firebase JS SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+
+
+
+<script>
+   // Your web app's Firebase configuration
+   const firebaseConfig = {
+      apiKey: "AIzaSyAA1H1ZLHk0wk9TV3kl86H51hU2ar6wB-g",
+      authDomain: "cedaralgo.firebaseapp.com",
+      projectId: "cedaralgo",
+      storageBucket: "cedaralgo.appspot.com",
+      messagingSenderId: "954545040500",
+      appId: "1:954545040500:web:55bd7b47e047a4e7a97521",
+      measurementId: "G-744FYMPKP1"
+   };
+ 
+   // Initialize Firebase
+   firebase.initializeApp(firebaseConfig);
+ 
+   // Enable analytics
+   firebase.analytics();
+   firebase.analytics().logEvent('page_view', {page_path: '/homepage'});
+   
+ </script>
+
 
       <script>
          $(document).ready(function() {
