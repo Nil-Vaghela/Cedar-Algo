@@ -25,6 +25,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "Nill6992"
 
 
+visited_ips = set()
+unique_visitor_count = 0
+
 
 
 db = SQLAlchemy(app)
@@ -376,7 +379,12 @@ def edit_trading_signal_status(id):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    global unique_visitor_count  # Declare the use of the global variable
+    ip = request.remote_addr
+    if ip not in visited_ips:
+        visited_ips.add(ip)
+        unique_visitor_count += 1
+    return render_template('index.html', visitor_count=unique_visitor_count)
 
 @app.route('/Blog')
 def Blog():
