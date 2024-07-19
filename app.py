@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from datetime import datetime, timedelta
@@ -63,6 +64,22 @@ class User(db.Model, UserMixin):
     feed_token = db.Column(db.String(2048))
     credit = db.Column(db.Integer, default=0)
     referred_by = db.Column(db.String(80), nullable=True)
+    stock_preferences = db.Column(db.Text, default=json.dumps({
+        "NIFTY": True,
+        "BANKNIFTY": True,
+        "FINNIFTY": True,
+        "MIDCPNIFTY": True,
+        "ONGC": True,
+        "RELIANCE": True,
+        "AUBANK": True,
+        "AMBUJACEM": True
+    }))
+
+    def get_stock_preferences(self):
+        return json.loads(self.stock_preferences)
+
+    def set_stock_preferences(self, preferences):
+        self.stock_preferences = json.dumps(preferences)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -108,11 +125,57 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 
+
+@app.route('/api/stocks/preferences', methods=['GET'])
+@login_required
+def get_preferences():
+    # Ensure the user has default preferences set
+    if not current_user.stock_preferences:
+        default_preferences = json.dumps({
+            "NIFTY": True,
+            "BANKNIFTY": True,
+            "FINNIFTY": True,
+            "MIDCPNIFTY": True,
+            "ONGC": True,
+            "RELIANCE": True,
+            "AUBANK": True,
+            "AMBUJACEM": True
+        })
+        current_user.stock_preferences = default_preferences
+        db.session.commit()
+    return jsonify(json.loads(current_user.stock_preferences))
+
+@app.route('/api/stocks/preferences', methods=['POST'])
+@login_required
+def update_preferences():
+    try:
+        new_preferences = request.json
+        # Retrieve current preferences and update them with new values
+        current_preferences = current_user.get_stock_preferences()
+        updated_preferences = {**current_preferences, **new_preferences}  # Merge dictionaries
+        current_user.set_stock_preferences(updated_preferences)
+        db.session.commit()
+        return jsonify({"message": "Preferences updated successfully!"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 def get_all_users_with_required_data():
     users = User.query.all()
     results = []
+    default_stocks = {
+        "NIFTY": True,
+        "BANKNIFTY": True,
+        "FINNIFTY": True,
+        "MIDCPNIFTY": True,
+        "ONGC": True,
+        "RELIANCE": True,
+        "AUBANK": True,
+        "AMBUJACEM": True
+    }
     for user in users:
         if user.api_key and user.Api_Username and user.pin and user.totp_secret and user.subscription_end_date and user.auth_token and user.refresh_token and user.feed_token:
+            # Merge default stock preferences with user's specific preferences if set
+            stock_preferences = json.loads(user.stock_preferences) if user.stock_preferences else default_stocks
             user_info = {
                 'id': user.id,
                 'first_name': user.first_name,
@@ -128,7 +191,8 @@ def get_all_users_with_required_data():
                 'refresh_token': user.refresh_token,
                 'feed_token': user.feed_token,
                 'credit': user.credit,
-                'referred_by': user.referred_by
+                'referred_by': user.referred_by,
+                'stock_preferences': stock_preferences  # Include stock preferences in the results
             }
             results.append(user_info)
     return results

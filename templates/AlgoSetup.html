@@ -1,115 +1,136 @@
 <!DOCTYPE html>
-   <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-      <!--=============== FAVICON ===============-->
-      <link rel="shortcut icon" href="static/img/favicon.png" type="image/x-icon">
-
-      <!--=============== REMIXICONS ===============-->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
-
-      <!--=============== CSS ===============-->
-      <link rel="stylesheet" href="static/css/Algo.css">
-
-      <title>Cedar AlgoTrading | Best Algo Trading Software | Best Algo Trading Platform | AI Trading BOT</title>
-   </head>
-   <body>
-
-
-    
-
-      <!--==================== HEADER ====================-->
-      <header class="header" id="header">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="static/img/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+    <link rel="stylesheet" href="static/css/Algo.css">
+    <title>Cedar AlgoTrading | Best Algo Trading Software | Best Algo Trading Platform | AI Trading BOT</title>
+</head>
+<body>
+    <header class="header" id="header">
         <nav class="nav container">
-            <a href="#" class="nav__logo">
-                <i class="ri-bar-chart-line"></i> Cedar Algo Trading
-            </a>
+            <a href="#" class="nav__logo"><i class="ri-bar-chart-line"></i> Cedar Algo Trading</a>
             <div class="nav__menu" id="nav-menu">
-              <ul class="nav__list">
-                <li class="nav__item">
-                    <a href="/HomePage" class="nav__link ">Home</a>
-                </li>
-                <li class="nav__item">
-                    <a href="/profile" class="nav__link">Profile & Wallet</a>
-                </li>
-                <li class="nav__item">
-                    <a href="/AlgoSetup" class="nav__link active-link">Algo Setup</a>
-                </li>
-                <li class="nav__item">
-                  <a href="/subscribe" class="nav__link">Subscription</a>
-              </li>
-                
-            </ul>
-                <!-- Close button -->
-                <div class="nav__close" id="nav-close">
-                    <i class="ri-close-line"></i>
-                </div>
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="/HomePage" class="nav__link ">Home</a></li>
+                    <li class="nav__item"><a href="/profile" class="nav__link">Profile & Wallet</a></li>
+                    <li class="nav__item"><a href="/AlgoSetup" class="nav__link active-link">Algo Setup</a></li>
+                    <li class="nav__item"><a href="/subscribe" class="nav__link">Subscription</a></li>
+                </ul>
+                <div class="nav__close" id="nav-close"><i class="ri-close-line"></i></div>
             </div>
-            <div class="nav__actions">
-                <!-- Toggle button -->
-                <div class="nav__toggle" id="nav-toggle">
-                    <i class="ri-menu-line"></i>
-                </div>
-            </div>
+            <div class="nav__actions"><div class="nav__toggle" id="nav-toggle"><i class="ri-menu-line"></i></div></div>
         </nav>
     </header>
-
-      <!--==================== MAIN ====================-->
-      <main class="main">
-         <!--==================== CONTACT ====================-->
-         <section class="contact section" id="contact">
-            <h2 class="section__title">
-                Right now we Support Only Angle One <br> 
-            </h2>
-            
-            <div class="login__container">
-              <div class="login__content {{ 'login__content_inactive' if credentials['Api_Username'] is none or credentials['api_key'] is none or credentials['pin'] is none or credentials['totp'] is none else 'login__content' }}">
-                    <!-- API Settings Form -->
-                    <form action="{{ url_for('AlgoSetup') }}" method="post" class="login__form" id="api-settings-form">
-                        <h3 class="login__title">
-                          {% if None in [credentials.get('Api_Username'), credentials.get('api_key'), credentials.get('pin'), credentials.get('totp'), credentials.get('auth_token'), credentials.get('refresh_token'), credentials.get('feed_token')] %}
-                          Please enter and verify your trading account
-                      {% else %}
-                          Your Account Has been verified
-                      {% endif %}
-                        
-                        </h3>
-                        
-                        <p class="new__description">Username</p>
-                        <div class="login__field">
-                            <i class="ri-key-line"></i>
-                            <input type="text" placeholder="Enter your Username" name="Api_Username" class="login__input" required value="{{ credentials['Api_Username'] }}">
-                        </div>
-                        
-                        <p class="new__description">API Secret Key</p>
-                        <div class="login__field">
-                            <i class="ri-shield-key-line"></i>
-                            <input type="password" id="apiSecret" placeholder="API Secret Key" name="api_key" class="login__input" required value="{{ credentials['api_key'] }}">
-                            <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('apiSecret', 'icon1')"></i>
-                        </div>
-        
-                        <p class="new__description">PIN</p>
-                        <div class="login__field">
-                            <i class="ri-shield-key-line"></i>
-                            <input type="password" id="pin" placeholder="PIN" name="pin" class="login__input" required value="{{ credentials['pin'] }}">
-                            <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('pin', 'icon2')"></i>
-                        </div>
-        
-                        <p class="new__description">TOTP Key</p>
-                        <div class="login__field">
-                            <i class="ri-shield-key-line"></i>
-                            <input type="password" id="totp" placeholder="TOTP Key" name="totp" class="login__input" required value="{{ credentials['totp'] }}">
-                            <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('totp', 'icon3')"></i>
-                        </div>
-        
-                        <div class="login__actions">
-                            <button type="submit" class="login__button">Update API Credentials</button>
-                        </div>
-                        <a href="/Steps" class="login__link">Click Here to get Detailed Steps for API KEY</a>
-                    </form>
+    <main class="main">
+        <section class="section" id="algo-setup-section">
+            <div class="content-flex-container">
+              <div class="login__container">
+                <div class="login__content {{ 'login__content_inactive' if credentials['Api_Username'] is none or credentials['api_key'] is none or credentials['pin'] is none or credentials['totp'] is none else 'login__content' }}">
+                      <!-- API Settings Form -->
+                      <form action="{{ url_for('AlgoSetup') }}" method="post" class="login__form" id="api-settings-form">
+                          <h3 class="login__title">
+                            {% if None in [credentials.get('Api_Username'), credentials.get('api_key'), credentials.get('pin'), credentials.get('totp'), credentials.get('auth_token'), credentials.get('refresh_token'), credentials.get('feed_token')] %}
+                            Please enter and verify your trading account
+                        {% else %}
+                            Your Account Has been verified
+                        {% endif %}
+                          
+                          </h3>
+                          
+                          <p class="new__description">Username</p>
+                          <div class="login__field">
+                              <i class="ri-key-line"></i>
+                              <input type="text" placeholder="Enter your Username" name="Api_Username" class="login__input" required value="{{ credentials['Api_Username'] }}">
+                          </div>
+                          
+                          <p class="new__description">API Secret Key</p>
+                          <div class="login__field">
+                              <i class="ri-shield-key-line"></i>
+                              <input type="password" id="apiSecret" placeholder="API Secret Key" name="api_key" class="login__input" required value="{{ credentials['api_key'] }}">
+                              <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('apiSecret', 'icon1')"></i>
+                          </div>
+          
+                          <p class="new__description">PIN</p>
+                          <div class="login__field">
+                              <i class="ri-shield-key-line"></i>
+                              <input type="password" id="pin" placeholder="PIN" name="pin" class="login__input" required value="{{ credentials['pin'] }}">
+                              <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('pin', 'icon2')"></i>
+                          </div>
+          
+                          <p class="new__description">TOTP Key</p>
+                          <div class="login__field">
+                              <i class="ri-shield-key-line"></i>
+                              <input type="password" id="totp" placeholder="TOTP Key" name="totp" class="login__input" required value="{{ credentials['totp'] }}">
+                              <i class="ri-eye-line toggle-password" onclick="togglePasswordVisibility('totp', 'icon3')"></i>
+                          </div>
+          
+                          <div class="login__actions">
+                              <button type="submit" class="login__button">Update API Credentials</button>
+                          </div>
+                          <a href="/Steps" class="login__link">Click Here to get Detailed Steps for API KEY</a>
+                      </form>
+                  </div>
+              </div>
+              <div class="login__container">
+                
+                <div class="login__content {{ 'login__content_inactive' if credentials['Api_Username'] is none or credentials['api_key'] is none or credentials['pin'] is none or credentials['totp'] is none else 'login__content' }}">
+                      <!-- API Settings Form -->
+                      <h3>Select The Stock  <br> You Want To Algo Trade With</h3>
+                      
+                <div class="toggle-container">
+                    <input type="checkbox" id="NIFTY-toggle" class="stock-checkbox">
+                    <label for="NIFTY-toggle" class="toggle-label">NIFTY</label>
                 </div>
+                <div class="toggle-container">
+                    <input type="checkbox" id="BANKNIFTY-toggle" class="stock-checkbox">
+                    <label for="BANKNIFTY-toggle" class="toggle-label">BANKNIFTY</label>
+                </div>
+                <div class="toggle-container">
+                    <input type="checkbox" id="FINNIfty-toggle" class="stock-checkbox">
+                    <label for="FINNIfty-toggle" class="toggle-label">FINNIfty</label>
+                </div>
+                <div class="toggle-container">
+                  <input type="checkbox" id="MIDCPNIFTY-toggle" class="stock-checkbox">
+                  <label for="MIDCPNIFTY-toggle" class="toggle-label">MIDCPNIFTY</label>
+              </div>
+              <div class="toggle-container">
+                <input type="checkbox" id="ONGC-toggle" class="stock-checkbox">
+                <label for="ONGC-toggle" class="toggle-label">ONGC</label>
+            </div>
+            <div class="toggle-container">
+              <input type="checkbox" id="RELIANCE-toggle" class="stock-checkbox">
+              <label for="RELIANCE-toggle" class="toggle-label">RELIANCE</label>
+          </div>
+          <div class="toggle-container">
+            <input type="checkbox" id="AUBANK-toggle" class="stock-checkbox">
+            <label for="AUBANK-toggle" class="toggle-label">AUBANK</label>
+        </div>
+        <div class="toggle-container">
+          <input type="checkbox" id="AMBUJACEM-toggle" class="stock-checkbox">
+          <label for="AMBUJACEM-toggle" class="toggle-label">AMBUJACEM</label>
+      </div>
+                  </div>
+              </div>
+              <!-- <div class="stock-toggle">
+                <h3>Select Stock</h3>
+                <div class="toggle-container">
+                    <input type="checkbox" id="nifty-toggle" class="stock-checkbox">
+                    <label for="nifty-toggle" class="toggle-label">Nifty</label>
+                </div>
+                <div class="toggle-container">
+                    <input type="checkbox" id="banknifty-toggle" class="stock-checkbox">
+                    <label for="banknifty-toggle" class="toggle-label">Banknifty</label>
+                </div>
+                <div class="toggle-container">
+                    <input type="checkbox" id="finnifty-toggle" class="stock-checkbox">
+                    <label for="finnifty-toggle" class="toggle-label">FinNifty</label>
+                </div>
+             
+            </div> -->
+            
             </div>
         </section>
         <h2 class="section__title">
@@ -122,71 +143,64 @@
 
       <!--==================== FOOTER ====================-->
       <footer class="footer">
-         <div class="footer__container container grid">
-           <div>
-             <a href="#" class="footer__logo">
-               <i class="ri-bar-chart-line"></i> Cedar AlgoTrading
-             </a>
-             <p class="new__description">This platform is for educational purposes only.<br> Trading involves significant risk and may not be suitable for all investors.<br> Please consult with a financial advisor before making any investment decisions.</p>
-           </div>
-       
-           <div class="footer__content grid">
-             <div>
-               <h3 class="footer__title">COMPANY</h3>
-               <ul class="footer__links">
-                  <li><a href="/about" class="footer__link">About Us</a></li>
-                  <li><a href="/pricing" class="footer__link">Payments Plan</a></li>
-                  <li><a href="/contact" class="footer__link">Contact Us</a></li>
-               </ul>
-             </div>
-       
-             <div>
-               <h3 class="footer__title">INFORMATION</h3>
-               <ul class="footer__links">
-                 <li>
-                   <a href="/Blog" class="footer__link">Blogs & News</a>
-                 </li>
-                 <li>
-                   <a href="/privacy" class="footer__link">Privacy Policy</a>
-                 </li>
-                 <li>
-                   <a href="/refund" class="footer__link">Refund and Cancellation</a>
-                 </li>
-               </ul>
-             </div>
-       
-             <!-- <div>
-               <h3 class="footer__title">SOCIAL MEDIA</h3>
-               <div class="footer__social">
-                 <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
-                   <i class="ri-facebook-circle-fill"></i>
-                 </a>
-                 <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
-                   <i class="ri-instagram-fill"></i>
-                 </a>
-                 <a href="https://twitter.com/" target="_blank" class="footer__social-link">
-                   <i class="ri-twitter-line"></i>
-                 </a>
-               </div>
-             </div> -->
-           </div>
-         </div>
-       
-         <span class="footer__copy">
-           &#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.3
-         </span>
-       </footer>
-
-      <!--========== SCROLL UP ==========-->
-      <a href="#" class="scrollup" id="scroll-up">
-         <i class="ri-arrow-up-line"></i>
-      </a>
-
-      <!--=============== SCROLLREVEAL ===============-->
-      <script src="static/js/scrollreveal.min.js"></script>
-
-      <!--=============== MAIN JS ===============-->
-      <script src="static/js/main.js"></script>
+        <div class="footer__container container grid">
+          <div>
+            <a href="#" class="footer__logo">
+              <i class="ri-bar-chart-line"></i> Cedar AlgoTrading
+            </a>
+            <p class="new__description">This platform is for educational purposes only.<br> Trading involves significant risk and may not be suitable for all investors.<br> Please consult with a financial advisor before making any investment decisions.</p>
+          </div>
+      
+          <div class="footer__content grid">
+            <div>
+              <h3 class="footer__title">COMPANY</h3>
+              <ul class="footer__links">
+                 <li><a href="/about" class="footer__link">About Us</a></li>
+                 <li><a href="/pricing" class="footer__link">Payments Plan</a></li>
+                 <li><a href="/contact" class="footer__link">Contact Us</a></li>
+              </ul>
+            </div>
+      
+            <div>
+              <h3 class="footer__title">INFORMATION</h3>
+              <ul class="footer__links">
+                <li>
+                  <a href="/Blog" class="footer__link">Blogs & News</a>
+                </li>
+                <li>
+                  <a href="/privacy" class="footer__link">Privacy Policy</a>
+                </li>
+                <li>
+                  <a href="/refund" class="footer__link">Refund and Cancellation</a>
+                </li>
+              </ul>
+            </div>
+      
+            <!-- <div>
+              <h3 class="footer__title">SOCIAL MEDIA</h3>
+              <div class="footer__social">
+                <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
+                  <i class="ri-facebook-circle-fill"></i>
+                </a>
+                <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
+                  <i class="ri-instagram-fill"></i>
+                </a>
+                <a href="https://twitter.com/" target="_blank" class="footer__social-link">
+                  <i class="ri-twitter-line"></i>
+                </a>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      
+        <span class="footer__copy">
+          &#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.3
+        </span>
+      </footer>
+        <!-- Footer content -->
+    </footer>
+    <a href="#" class="scrollup" id="scroll-up"><i class="ri-arrow-up-line"></i></a>
+    <script src="static/js/main.js"></script>
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -206,12 +220,58 @@
             passwordIcon.classList.add('ri-eye-line');
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/stocks/preferences', {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(preferences => {
+        console.log("Fetched preferences:", preferences);
+        Object.keys(preferences).forEach(stock => {
+            const checkbox = document.getElementById(stock + '-toggle');
+            if (checkbox) {
+                checkbox.checked = preferences[stock];
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error loading preferences:', error);
+    });
+
+    // Event listeners for checkboxes
+    document.querySelectorAll('.stock-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const stockId = this.id.replace('-toggle', ''); // Gets 'NIFTY' from 'NIFTY-toggle'
+            const isTrading = this.checked;
+            console.log(`Toggling ${stockId}: ${isTrading}`); // Debugging output
+
+            fetch('/api/stocks/preferences', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ [stockId]: isTrading })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Server response:', data))
+            .catch(error => console.error('Error updating preferences:', error));
+        });
+    });
+});
     </script>
-    
+   
       
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-   </body>
 </html>

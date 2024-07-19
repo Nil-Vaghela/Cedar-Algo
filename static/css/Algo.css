@@ -1068,3 +1068,78 @@ img {
 .api-instructions a:hover {
   color: var(--first-color-light);  /* Changes color on hover for interactivity */
 }
+/* Use this section to add or replace in your existing CSS file */
+.content-flex-container {
+  display: flex;
+  justify-content: space-around; /* Aligns children to the start of the container, reducing space between */
+  align-items: start; /* Keeps items aligned at their top edges */
+  /* Maintains padding around the outer edge of the container */
+  gap: 0px; /* Provides a consistent gap between children */
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Toggle Checkbox and Label Styles */
+.stock-checkbox {
+  display: none;  /* Keep the checkbox hidden */
+}
+
+.toggle-label {
+  position: relative;
+  padding-left: 50px;  /* Space for the toggle */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  line-height: 24px;
+  color: var(--white-color);
+  font-size: var(--normal-font-size);
+  display: block;
+}
+
+.toggle-label:before, .toggle-label:after {
+  content: '';
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+/* Style for the box of the switch */
+.toggle-label:before {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px; /* Width of the toggle */
+  height: 24px; /* Height of the toggle */
+  background-color: var(--container-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Adding some depth */
+}
+
+/* Style for the knob of the switch */
+.toggle-label:after {
+  top: 2px;
+  left: 2px;
+  width: 20px; /* Width of the knob */
+  height: 20px; /* Height of the knob */
+  background-color: var(--white-color);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Adding some depth */
+}
+
+/* Move the knob to the right when checked */
+.stock-checkbox:checked + .toggle-label:after {
+  left: 18px;
+}
+
+/* Change background when checked */
+.stock-checkbox:checked + .toggle-label:before {
+  background-color: var(--first-color);
+}
+
+@media (max-width: 768px) {
+  .content-flex-container {
+      flex-direction: column;
+  }
+}
