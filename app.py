@@ -633,6 +633,10 @@ def refund():
 def Steps():
     return render_template('StepsToAddAngleOne.html')
 
+@app.route('/ReferAndEarn')
+def ReferAndEarn():
+    return render_template('ReferAndEarn.html')
+
 
 
 def get_ip_info():

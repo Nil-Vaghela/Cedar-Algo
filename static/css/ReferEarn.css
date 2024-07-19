@@ -1,4 +1,20 @@
 /*=============== GOOGLE FONTS ===============*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+/*=============== VARIABLES CSS ===============*/
+:root {
+    --header-height: 3.5rem;
+    --primary-color: #28aa5e; /* Vibrant Green */
+    --secondary-color: #000000; /* Dark Gray */
+    --background-color: #000000; /* Black for backgrounds */
+    --text-color: #ffffff; /* Soft White for text */
+    --accent-color: #28aa5e; /* Lighter green for accents and hover states */
+
+    --font-main: "Poppins", sans-serif;
+
+    --border-radius: 8px; /* Border radius for buttons and card elements */
+}
+/*=============== GOOGLE FONTS ===============*/
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
 
 /*=============== VARIABLES CSS ===============*/
@@ -10,20 +26,16 @@
   --first-color-alt: #27ae60;
   --first-color-light: #28aa5e;
   --title-color: hsl(228, 8%, 98%);
-  --text-color: hsl(228, 8%, 70%);
+  --text-color: hsl(0, 0%, 100%);
   --text-color2: hsl(0, 0%, 0%);
   --white-color: hsl(228, 8%, 98%);
   --black-color: hsl(228, 6%, 4%);
-  --body-color: hsl(0, 0%, 0%);
+  --body-color: hsl(228, 6%, 8%);
   --container-color: hsl(228, 6%, 12%);
   --shadow-img: 0 0 48px hsl(145, 63%, 70%);
   --gradient-card: linear-gradient(180deg,
                                 rgb(25, 31, 22),
                                 hsl(145, 63%, 42%));
-
-
-
-  
 
   /*========== Font and typography ==========*/
   /*.5rem = 8px | 1rem = 16px ...*/
@@ -1015,3 +1027,521 @@ img {
 .hidden {
   display: none !important;
 }
+
+/*=============== BASE STYLES ===============*/
+/* General Padding and Margin Adjustments */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    font-size: 16px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px; /* Added padding around the body for better framing */
+}
+
+h1, h2, h3, h4, p {
+    margin-bottom: 20px; /* Increased margin for better separation */
+}
+
+/* Increased padding in sections for better separation */
+.section {
+    padding: 60px 5%;
+    margin-top: 40px; /* Increased margin above sections */
+}
+
+/* Text and Element Spacing */
+.nav__list {
+    display: flex;
+    align-items: center;
+    padding: 0 20px; /* Added padding to the navbar list for spacing */
+}
+
+.nav__item {
+    margin-left: 30px; /* Increased space between navigation items */
+}
+
+/* Enhanced grid gap for sections containing multiple elements */
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px; /* Increased gap between grid columns */
+}
+
+/* Benefits Section Improvements */
+.benefits__wrapper {
+    gap: 30px; /* Added gap for better spacing between benefits */
+}
+
+/* Footer Enhancements */
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr; /* Single column layout on smaller screens */
+        gap: 20px; /* Smaller gap for smaller screens */
+    }
+
+    .nav__item {
+        margin-left: 15px; /* Smaller margins in navigation on mobile */
+    }
+
+    .nav__menu {
+        padding: 20px; /* Padding inside mobile menu */
+    }
+}
+
+/* Scroll Up Button Improvements */
+.scrollup {
+    bottom: 30px; /* Lower placement for better visibility */
+    padding: 12px; /* Larger area for easier clicking */
+}
+
+/* Input Slider Customization for Better Control and Visibility */
+.slider {
+    height: 20px; /* Thicker slider for easier interaction */
+}
+
+.slider::-webkit-slider-thumb {
+    width: 30px; /* Larger thumb for easier sliding */
+    height: 30px;
+}
+
+.slider::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+}
+
+/*=============== HEADER ===============*/
+.header {
+    width: 100%;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    height: var(--header-height);
+}
+
+.nav__logo {
+    color: var(--primary-color);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.nav__list {
+    display: flex;
+    align-items: center;
+}
+
+.nav__item {
+    margin-left: 20px;
+}
+
+.nav__link {
+    color: var(--text-color);
+    font-size: 1rem;
+    position: relative;
+}
+
+.nav__link:hover,
+.nav__link.active-link {
+    color: var(--accent-color);
+}
+
+.nav__toggle,
+.nav__close {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Responsive Navigation */
+@media (max-width: 768px) {
+    .nav__toggle,
+    .nav__close {
+        display: block;
+    }
+
+    .nav__menu {
+        position: absolute;
+        top: var(--header-height);
+        right: 0;
+        width: 100%;
+        background-color: var(--secondary-color);
+        display: none;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .nav__list {
+        flex-direction: column;
+    }
+
+    .nav__item {
+        margin-bottom: 10px;
+    }
+
+    .show-menu {
+        display: block;
+    }
+}
+
+/*=============== MAIN SECTION STYLING ===============*/
+.main {
+    padding-top: var(--header-height);
+}
+
+.section {
+    padding: 50px 5%;
+    background: var(--background-color);
+    border-radius: var(--border-radius);
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.home__container,
+.benefits__wrapper,
+.container {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.home__img-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home__title,
+.section__title {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.home__description,
+.benefit {
+    color: var(--text-color);
+}
+
+.benefit__icon {
+    font-size: 2rem;
+    color: var(--accent-color);
+}
+
+/*=============== BUTTON STYLES ===============*/
+.button {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.button:hover {
+    background-color: var(--accent-color);
+}
+
+/*=============== FOOTER STYLING ===============*/
+.footer {
+    padding-block: 4rem 2rem;
+  }
+  
+  .footer__container {
+    row-gap: 4rem;
+  }
+  
+  .footer__logo {
+    display: inline-flex;
+    align-items: center;
+    column-gap: .25rem;
+    color: var(--title-color);
+    font-size: var(--h2-font-size);
+    font-weight: var(--font-semi-bold);
+    margin-bottom: .75rem;
+  }
+  
+  .footer__logo i {
+    color: var(--first-color);
+    font-size: 1.5rem;
+    font-weight: initial;
+  }
+  
+  .footer__content {
+    grid-template-columns: repeat(2, max-content);
+    gap: 4rem 3rem;
+  }
+  
+  .footer__title {
+    font-size: var(--normal-font-size);
+    margin-bottom: 1rem;
+  }
+  
+  .footer__links {
+    display: grid;
+    row-gap: .75rem;
+  }
+  
+  .footer__link {
+    color: var(--text-color);
+    transition: color .4s;
+  }
+  
+  .footer__social {
+    display: flex;
+    column-gap: .75rem;
+  }
+  
+  .footer__social-link {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    transition: color .4s;
+  }
+  
+  .footer__link:hover, 
+  .footer__social-link:hover {
+    color: var(--first-color);
+  }
+  
+  .footer__copy {
+    display: block;
+    margin-top: 6rem;
+    text-align: center;
+    font-size: var(--small-font-size);
+  }
+
+/*=============== SCROLL UP BUTTON ===============*/
+.scrollup {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.scrollup:hover {
+    background-color: var(--accent-color);
+}
+/*=============== SLIDER STYLING ===============*/
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px; /* Thinner track for a sleeker look */
+    border-radius: 4px;
+    background: #2d3436; /* Dark track background for contrast against thumb */
+    outline: none;
+    transition: background-color .3s ease;
+}
+
+.slider:hover,
+.slider:focus {
+    background: #636e72; /* Lighter shade when hovered/focused */
+}
+
+/* Slider thumb styling for WebKit browsers */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #27ae60; /* Primary green color for the thumb */
+    border: 3px solid #ffffff; /* White border for better visibility */
+    cursor: pointer;
+    box-shadow: 0 0 4px #000000; /* Subtle shadow for depth */
+    transition: transform .3s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2); /* Enlarges the thumb for better interactivity */
+}
+
+/* Slider thumb styling for Mozilla browsers */
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #27ae60;
+    border: 3px solid #ffffff;
+    cursor: pointer;
+    box-shadow: 0 0 4px #000000;
+    transition: transform .3s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Styling for the focus outline on the slider thumb */
+.slider:focus::-webkit-slider-thumb,
+.slider:focus::-moz-range-thumb {
+    border-color: #74b9ff; /* Highlight color when focused */
+}
+
+/* Optional: Style for the slider track (only for WebKit) */
+.slider::-webkit-slider-runnable-track {
+    height: 8px;
+    background: #2d3436;
+    border-radius: 4px;
+}
+/*=============== LOGIN FORM STYLING ===============*/
+.login__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--body-color);
+    padding: 2rem; /* Added to give space around the container */
+    width: 100%; /* Use full width on smaller screens */
+    max-width: 500px; /* Limits the maximum width */
+    margin: auto;
+  }
+  
+  .login__img {
+    width: 180px;
+    margin-bottom: 2rem;
+  }
+  
+  .login__content {
+    width: 100%;
+    max-width: 460px;
+    background: var(--container-color);
+    padding: 4rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 48px hsl(145, 63%, 42%);
+    margin: 1rem; /* Space between form and other content */
+  }
+  
+  .login__form {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .login__title {
+    font-size: var(--h2-font-size);
+    color: var(--title-color);
+    margin-bottom: 2rem; /* More space below the title */
+    text-align: center;
+  }
+  
+  .login__field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--white-color);
+    border: 2px solid var(--first-color-light); /* Light green border */
+    border-radius: 0.5rem;
+    overflow: hidden;
+    padding: 0.75rem 1rem; /* Increased padding for better alignment */
+    height: 50px;
+    
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+    z-index: 1050; /* Ensures it's above other content but below the modal */
+    display: none; /* Start hidden */
+  }
+  
+  .popup-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1055; /* Ensures it's above the overlay */
+    font-weight: 900;
+    
+  }
+  
+  
+  .login__field i {
+    font-size: 1.5rem;
+    color: var(--first-color); /* Use the theme's primary color for icons */
+    margin-right: 1rem; /* Space between icon and input */
+  }
+  
+  .login__input {
+    flex: 1; /* Make the input take up the remaining space */
+    padding: 0.75rem 0.5rem; /* Adjust padding for better alignment */
+    border: none;
+    outline: none;
+    font-size: var(--normal-font-size);
+    font-family: var(--body-font);
+    color: var(--text-color2);
+    background-color: transparent; /* Ensures no background interference */
+  }
+  
+  .login__button {
+    background-color: var(--first-color); /* Your existing green color */
+    color: var(--white-color); /* Text color */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px; /* Adjust padding as needed */
+    text-align: center;
+    width: 100%; /* Adjust width to fit your design needs */
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  
+  .login__button:hover {
+    background-color: var(--first-color-alt); /* Slightly darker green on hover */
+  }
+  
+  .login__link {
+    color: var(--first-color-light); /* Making sure it's readable and themed */
+    font-size: var(--small-font-size);
+    text-align: center;
+    cursor: pointer;
+    transition: color 0.3s;
+    display: block; /* Ensure links are on separate lines */
+    margin-top: 1rem; /* Increased space above the links */
+    height: 40px;
+  }
+  
+  .login__link:hover {
+    color: var(--first-color); /* Brighter green on hover for better visibility */
+  }
+  
+  /* Ensure responsiveness on smaller screens */
+  @media screen and (max-width: 576px) {
+    .login__content {
+      padding: 2rem; /* Reduce padding on smaller screens */
+    }
+    .login__button {
+      padding: 0.75rem; /* Reduce padding of button for smaller devices */
+    }
+  }
+  .hidden {
+    display: none !important;
+  }
+  
