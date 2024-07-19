@@ -7,8 +7,8 @@
   --header-height: 3.5rem;
   --yellow-color: #ffdd57;
   --yellow-glow: rgba(255, 221, 87, 0.75);
-  --green-color: hsl(145, 63%, 42%);
-  --green-glow: hsl(145, 63%, 42%);
+  --green-color: #27ae60;
+  --green-glow: #27ae60;
   --red-color: #F44336;
   --red-glow: rgba(244, 67, 54, 0.75);
   /*========== Colors ==========*/
@@ -28,10 +28,10 @@
   --red-color-light: hsla(0, 100%, 30%);
   --gradient-card: linear-gradient(180deg,
                                 hsla(93, 8%, 8%),
-                                hsl(145, 63%, 42%));
+                                hsl(145, 62%, 33%));
                                 --gradient-card-green: linear-gradient(180deg,
                                 hsla(93, 8%, 8%),
-                                rgb(99, 197, 20));
+                                hsl(145, 80%, 22%));
   --gradient-card-yellow: linear-gradient(180deg,
                                 hsla(93, 8%, 8%),  /* Lighter Yellow */
                                 rgb(220, 120, 43)); /* Darker Yellow */

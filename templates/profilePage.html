@@ -1,73 +1,40 @@
 <!DOCTYPE html>
-   <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-      <!--=============== FAVICON ===============-->
-      <link rel="shortcut icon" href="static/img/favicon.png" type="image/x-icon">
-
-      <!--=============== REMIXICONS ===============-->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
-
-      <!--=============== CSS ===============-->
-      <link rel="stylesheet" href="/static/css/Algo.css">
-
-      <title>Cedar AlgoTrading | Best Algo Trading Software | Best Algo Trading Platform | AI Trading BOT</title>
-   </head>
-   <body>
-    
-
-      <!--==================== HEADER ====================-->
-      <header class="header" id="header">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="static/img/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.1.0/remixicon.min.css">
+    <link rel="stylesheet" href="/static/css/Algo.css">
+    <title>Cedar AlgoTrading | Best Algo Trading Software | AI Trading BOT</title>
+    <meta name="description" content="Cedar AlgoTrading provides the best algo trading software with AI Trading BOT. Earn money through our referral program.">
+</head>
+<body>
+    <header class="header" id="header">
         <nav class="nav container">
             <a href="#" class="nav__logo">
                 <i class="ri-bar-chart-line"></i> Cedar Algo Trading
             </a>
             <div class="nav__menu" id="nav-menu">
                 <ul class="nav__list">
-                    <li class="nav__item">
-                        <a href="/HomePage" class="nav__link">Home</a>
-                    </li>
-                    <li class="nav__item">
-                        <a href="/profile" class="nav__link active-link">Profile & wallet</a>
-                    </li>
-                   
-                    <li class="nav__item">
-                        <a href="/AlgoSetup" class="nav__link">Algo Setup</a>
-                    </li>
-                    <li class="nav__item">
-                      <a href="/subscribe" class="nav__link">Subscription</a>
-                  </li>
-                    
+                    <li class="nav__item"><a href="/HomePage" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="/profile" class="nav__link active-link">Profile & Wallet</a></li>
+                    <li class="nav__item"><a href="/AlgoSetup" class="nav__link">Algo Setup</a></li>
+                    <li class="nav__item"><a href="/subscribe" class="nav__link">Subscription</a></li>
                 </ul>
-                <!-- Close button -->
-                <div class="nav__close" id="nav-close">
-                    <i class="ri-close-line"></i>
-                </div>
+                <div class="nav__close" id="nav-close"><i class="ri-close-line"></i></div>
             </div>
             <div class="nav__actions">
-                <!-- Toggle button -->
-                <div class="nav__toggle" id="nav-toggle">
-                    <i class="ri-menu-line"></i>
-                </div>
+                <div class="nav__toggle" id="nav-toggle"><i class="ri-menu-line"></i></div>
             </div>
         </nav>
     </header>
 
-
-      <!--==================== MAIN ====================-->
-      <main class="main">
-         <!--==================== CONTACT ====================-->
-         <section class="contact section" id="contact">
-            <h2 class="section__title">
-                Share and Earn Money <br> Up to ₹999 Per User
-            </h2>
-           
+    <main class="main">
+        <section class="contact section" id="contact">
+            <h2 class="section__title">Share and Earn Money <br> Up to ₹999 Per User</h2>
             <div class="container grid profile-layout">
-                <!-- Left container -->
                 <div class="profile">
-                   
                     <div class="profile__info card">
                         <p><strong>Your Profile</strong></p>
                         <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
@@ -77,8 +44,6 @@
                         <p><strong>Subscription End Date:</strong> {{ user.subscription_end_date.strftime('%d-%m-%y') if user.subscription_end_date else 'No active subscription' }}</p>
                     </div>
                 </div>
-        
-                <!-- Right container -->
                 <div class="profile">
                     <div class="profile__info card">
                         <h4 class="card-title">Referral Bonus</h4>
@@ -92,23 +57,18 @@
                         <p><strong>Your Referral ID:</strong> {{ user.username }}</p>
                     </div>
                 </div>
-
-
-    {% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-        <div class="alert-container">
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    {% endwith %}
-        
-                <!-- Centered below -->
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% endwith %}
                 <div class="profile center">
                     <div class="profile__info card">
                         <p><strong>Withdrawable Credit:</strong> {{ user.credit }}</p>
-                        <!-- Form to send POST request -->
                         <form action="/api/submit_credit" method="POST" id="creditForm">
                             <label for="upiId" class="form-label">Enter UPI ID:</label>
                             <input type="text" id="upiId" name="upiId" placeholder="e.g., yourname@upi" class="input" required>
@@ -117,86 +77,48 @@
                         </form>
                     </div>
                 </div>
-                
             </div>
         </section>
+    </main>
 
-      <!--==================== FOOTER ====================-->
-      <footer class="footer">
-         <div class="footer__container container grid">
-           <div>
-             <a href="#" class="footer__logo">
-               <i class="ri-bar-chart-line"></i> Cedar AlgoTrading
-             </a>
-             <p class="new__description">This platform is for educational purposes only.<br> Trading involves significant risk and may not be suitable for all investors.<br> Please consult with a financial advisor before making any investment decisions.</p>
-           </div>
-       
-           <div class="footer__content grid">
-             <div>
-               <h3 class="footer__title">COMPANY</h3>
-               <ul class="footer__links">
-                  <li><a href="/about" class="footer__link">About Us</a></li>
-                  <li><a href="/pricing" class="footer__link">Payments Plan</a></li>
-                  <li><a href="/contact" class="footer__link">Contact Us</a></li>
-               </ul>
-             </div>
-       
-             <div>
-               <h3 class="footer__title">INFORMATION</h3>
-               <ul class="footer__links">
-                 <li>
-                   <a href="/Blog" class="footer__link">Blogs & News</a>
-                 </li>
-                 <li>
-                   <a href="/privacy" class="footer__link">Privacy Policy</a>
-                 </li>
-                 <li>
-                   <a href="/refund" class="footer__link">Refund and Cancellation</a>
-                 </li>
-               </ul>
-             </div>
-       
-             <!-- <div>
-               <h3 class="footer__title">SOCIAL MEDIA</h3>
-               <div class="footer__social">
-                 <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
-                   <i class="ri-facebook-circle-fill"></i>
-                 </a>
-                 <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
-                   <i class="ri-instagram-fill"></i>
-                 </a>
-                 <a href="https://twitter.com/" target="_blank" class="footer__social-link">
-                   <i class="ri-twitter-line"></i>
-                 </a>
-               </div>
-             </div> -->
-           </div>
-         </div>
-       
-         <span class="footer__copy">
-           &#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.3
-         </span>
-       </footer>
+    <footer class="footer">
+        <div class="footer__container container grid">
+            <div>
+                <a href="#" class="footer__logo">
+                    <i class="ri-bar-chart-line"></i> Cedar AlgoTrading
+                </a>
+                <p class="new__description">This platform is for educational purposes only.<br> Trading involves significant risk and may not be suitable for all investors.<br> Please consult with a financial advisor before making any investment decisions.</p>
+            </div>
+            <div class="footer__content grid">
+                <div>
+                    <h3 class="footer__title">COMPANY</h3>
+                    <ul class="footer__links">
+                        <li><a href="/about" class="footer__link">About Us</a></li>
+                        <li><a href="/pricing" class="footer__link">Payments Plan</a></li>
+                        <li><a href="/contact" class="footer__link">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer__title">INFORMATION</h3>
+                    <ul class="footer__links">
+                        <li><a href="/Blog" class="footer__link">Blogs & News</a></li>
+                        <li><a href="/privacy" class="footer__link">Privacy Policy</a></li>
+                        <li><a href="/refund" class="footer__link">Refund and Cancellation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <span class="footer__copy">&#169; 2024 Cedar AlgoTrading. All Rights Reserved. V1.0.0.3</span>
+    </footer>
 
-      <!--========== SCROLL UP ==========-->
-      <a href="#" class="scrollup" id="scroll-up">
-         <i class="ri-arrow-up-line"></i>
-      </a>
+    <a href="#" class="scrollup" id="scroll-up">
+        <i class="ri-arrow-up-line"></i>
+    </a>
 
-      <!--=============== SCROLLREVEAL ===============-->
-      <script src="static/js/scrollreveal.min.js"></script>
-
-      <!--=============== MAIN JS ===============-->
-      <script src="static/js/main.js"></script>
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    
-      
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="static/js/scrollreveal.min.js"></script>
+    <script src="static/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.7.12/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-   </body>
 </html>
