@@ -125,6 +125,30 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 
+@app.route('/update_tokens', methods=['POST'])
+def update_tokens():
+    user_id = request.json.get('user_id')
+    auth_token = request.json.get('auth_token')
+    refresh_token = request.json.get('refresh_token')
+    feed_token = request.json.get('feed_token')
+
+    if not user_id:
+        return jsonify({'error': 'User ID is required'}), 400
+
+    user = User.query.get(user_id)
+    if user:
+        try:
+            user.auth_token = auth_token
+            user.refresh_token = refresh_token
+            user.feed_token = feed_token
+            db.session.commit()
+            return jsonify({'message': 'Tokens updated successfully'}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'error': 'User not found'}), 404
+    
 
 @app.route('/api/stocks/preferences', methods=['GET'])
 @login_required
