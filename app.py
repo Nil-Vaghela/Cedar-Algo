@@ -43,8 +43,8 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-client = razorpay.Client(auth=("rzp_live_8kQ21NWsMXOu2S", "Q6rWc0EoKLmODmLKzAvKvz2S")) # live
-#client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF")) #test
+#client = razorpay.Client(auth=("rzp_live_8kQ21NWsMXOu2S", "Q6rWc0EoKLmODmLKzAvKvz2S")) # live
+client = razorpay.Client(auth=("rzp_test_2hY8PR8G5rKybf", "E8w1YuPcAesivzTuSY5Y87qF")) #test
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -107,6 +107,13 @@ class User(db.Model, UserMixin):
     
     def get_referred_by(self):
         return self.referred_by
+    
+    def update_subscription_end_date(self, new_end_date):
+        if isinstance(new_end_date, datetime):
+            self.subscription_end_date = new_end_date
+            db.session.commit()
+        else:
+            raise ValueError("new_end_date must be a datetime object")
 
 class TradingSignal(db.Model):
     __tablename__ = 'trading_signal'
@@ -124,6 +131,35 @@ def load_user(user_id):
 
     return db.session.get(User, int(user_id))
 
+
+def parse_date(date_str):
+    """Parses the date string into a datetime object, handling different formats."""
+    for fmt in ('%Y-%m-%d', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%S.%f'):
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    raise ValueError(f"time data '{date_str}' does not match any of the formats")
+
+
+
+@app.route('/update_subscription/<int:user_id>', methods=['PUT'])
+def update_subscription(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    data = request.json
+    if 'new_end_date' not in data:
+        return jsonify({'error': 'new_end_date is required'}), 400
+
+    try:
+        new_end_date = datetime.now() + timedelta(days=365)
+        user.update_subscription_end_date(new_end_date)
+        return jsonify({'message': 'Subscription end date updated successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    
 
 @app.route('/update_tokens', methods=['POST'])
 def update_tokens():
@@ -597,7 +633,25 @@ def verify_payment():
         flash('Payment verification failed.', 'error')
         return jsonify({'success': False, 'message': 'Payment verification failed'}), 400
 
+@app.route('/api/users/<int:start_id>/<int:end_id>', methods=['DELETE'])
+def delete_users_in_range(start_id, end_id):
+    if start_id > end_id:
+        return jsonify({'error': 'start_id must be less than or equal to end_id'}), 400
 
+    users_to_delete = User.query.filter(User.id.between(start_id, end_id)).all()
+
+    if not users_to_delete:
+        return jsonify({'message': 'No users found in the specified range'}), 404
+
+    for user in users_to_delete:
+        db.session.delete(user)
+
+    db.session.commit()
+
+    return jsonify({
+        'message': f'Users with IDs between {start_id} and {end_id} deleted successfully',
+        'deleted_users_count': len(users_to_delete)
+    }), 200
 
 @app.route('/api/user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
